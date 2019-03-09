@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "outDir": "dist/",
+        "target": "es6",
+        "module": "esNext",
+        "strict": true,
+        "importHelpers": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "locale": "en",
+        "noImplicitAny": false,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "sourceMap": false,
+        "resolveJsonModule": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        },
+        "typeRoots": ["node_modules/web-ext-types"],
+        "lib": ["esnext.array", "esnext", "es2017", "dom", "dom.iterable"]
+    },
+    "include": ["src/**/*.ts", "src/**/*.tsx", "typings/**/*.ts", "lib/**/*.ts"],
+    "exclude": ["node_modules"]
+}

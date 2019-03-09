@@ -1,0 +1,33 @@
+{
+    "tabWidth": 4,
+    "semi": false,
+    "overrides": [
+        {
+            "files": "*.ts",
+            "options": {
+                "semi": true,
+                "singleQuote": true
+            }
+        },
+        {
+            "files": "*.js",
+            "options": {
+                "semi": true,
+                "singleQuote": true
+            }
+        },
+        {
+            "files": ".prettierrc",
+            "options": { 
+                "parser": "json"
+            }
+        },
+        {
+            "files": "*.md",
+            "options": {
+                "parser": "markdown",
+                "proseWrap": "preserve"
+            }
+        }
+    ]
+}

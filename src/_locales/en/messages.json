@@ -1,0 +1,11 @@
+{
+    "extensionName": {
+      "message": "Media Score",
+      "description": "Name of the extension."
+    },
+  
+    "extensionDescription": {
+      "message": "Show user score on the media list in ott service.",
+      "description": "Description of the extension."
+    }
+}

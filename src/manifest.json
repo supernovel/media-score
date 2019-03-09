@@ -1,0 +1,44 @@
+{
+    "manifest_version": 2,
+    "name": "__MSG_extensionName__",
+    "version": "{{version}}",
+    "description": "__MSG_extensionDescription__",
+    "default_locale": "en",
+    "homepage_url": "{{homepage}}",
+    "icons": {
+        "48": "images/icon_48.png",
+        "128": "images/icon_128.png"
+    },
+    "permissions": [
+        "*://*.netflix.com/*",
+        "*://*.watcha.com/*",
+        "*://play.watcha.net/*",
+        "*://*.themoviedb.org/*",
+        "*://*.rottentomatoes.com/*",
+        "*://*.imdb.com/*",
+        "*://*.media-imdb.com/*",
+        "tabs", 
+        "storage"
+    ],
+    "background": {
+        "persistent": false,
+        "scripts": ["background/background.ts"]
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://*.netflix.com/*"],
+            "js": ["content/netflix.ts"]
+        },
+        {
+            "matches": ["*://play.watcha.net/*"],
+            "js": ["content/watcha.ts"]
+        }
+    ],
+    "chrome|minimum_chrome_version": "72.0",
+    "firefox|browser_specific_settings": {
+        "gecko": {
+            "id": "mediaScore@addon.com",
+            "strict_min_version": "63.0"
+        }
+    }
+}
