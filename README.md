@@ -16,7 +16,7 @@
 - Use lit-element(webcomponents)
 
 ## Todo
--   [] Add Option page
+- [ ] Add Option page
 
 ## Build
 
