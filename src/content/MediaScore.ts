@@ -3,11 +3,11 @@ import { browser, Runtime } from 'webextension-polyfill-ts';
 const OBSERVER_CHECK_INTERVAL = 500;
 
 export abstract class MediaScore {
-    private targetObject = new Map<string, object>();
-    private observer: MutationObserver | undefined;
-    private observerCheckTimer: number | undefined;
-    private observeElement: Element | null | undefined;
-    private port: Runtime.Port;
+    private _targetObject = new Map<string, object>();
+    private _observer: MutationObserver | undefined;
+    private _observerCheckTimer: number | undefined;
+    private _observeElement: Element | null | undefined;
+    private _port: Runtime.Port;
 
     constructor(
         public serviceName: string = 'unknown',
@@ -36,20 +36,20 @@ export abstract class MediaScore {
         /**
          * connect background script
          */
-        this.port = browser.runtime.connect(undefined, {
+        this._port = browser.runtime.connect(undefined, {
             name: 'media_score'
         });
 
-        this.port.onMessage.addListener(this._processMessage.bind(this));
+        this._port.onMessage.addListener(this._processMessage.bind(this));
     }
 
     public applyObserver() {
-        if (this.observerCheckTimer) {
-            clearTimeout(this.observerCheckTimer);
+        if (this._observerCheckTimer) {
+            clearTimeout(this._observerCheckTimer);
         }
 
         if (!this._applyObserver()) {
-            this.observerCheckTimer = setTimeout(
+            this._observerCheckTimer = setTimeout(
                 this.applyObserver.bind(this),
                 OBSERVER_CHECK_INTERVAL
             );
@@ -80,7 +80,7 @@ export abstract class MediaScore {
         message: { id: string; data: ScoreInfos },
         port: Runtime.Port
     ) {
-        const target = this.targetObject.get(message.id);
+        const target = this._targetObject.get(message.id);
         const scoreBar = document.createElement('score-bar');
 
         console.debug('Content page received message', message, 'from', target);
@@ -96,7 +96,7 @@ export abstract class MediaScore {
             scoreBar
         );
 
-        this.targetObject.delete(message.id);
+        this._targetObject.delete(message.id);
     }
 
     private _processMutationRecords(mutationRecords: MutationRecord[]) {
@@ -110,9 +110,9 @@ export abstract class MediaScore {
                     return;
                 }
 
-                this.targetObject.set(<string>mediaInfo.id, target);
+                this._targetObject.set(<string>mediaInfo.id, target);
                 
-                this.port.postMessage(
+                this._port.postMessage(
                     Object.assign(
                         {
                             serviceName: this.serviceName
@@ -125,23 +125,23 @@ export abstract class MediaScore {
     }
 
     private _applyObserver() {
-        this.observeElement = document.querySelector(this
+        this._observeElement = document.querySelector(this
             .observeTarget as string);
 
-        if (this.observeElement == null) {
+        if (this._observeElement == null) {
             return false;
         }
 
-        this.observer = new MutationObserver(
+        this._observer = new MutationObserver(
             this._processMutationRecords.bind(this)
         );
 
-        this.observer.observe(
-            this.observeElement,
+        this._observer.observe(
+            this._observeElement,
             this.mutationObserverOptions
         );
 
-        console.debug(`apply observer: ${this.observeElement}`);
+        console.debug(`apply observer: ${this._observeElement}`);
 
         return true;
     }
