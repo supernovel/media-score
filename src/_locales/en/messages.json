@@ -5,7 +5,7 @@
     },
   
     "extensionDescription": {
-      "message": "Show user score on the media list in ott service.",
+      "message": "Show user score on the media list in ott service(Netflix, Play.watcha).",
       "description": "Description of the extension."
     }
 }

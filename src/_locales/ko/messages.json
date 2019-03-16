@@ -5,7 +5,7 @@
     },
   
     "extensionDescription": {
-      "message": "ott 서비스에서 유저 점수를 표시해줍니다.",
+      "message": "ott 서비스(Netflix, Play.watcha)에서 유저 점수를 표시해줍니다.",
       "description": "확장 프로그램 설명"
     }
 }
