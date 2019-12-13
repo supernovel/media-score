@@ -12,6 +12,7 @@
         "ordered-imports": false,
         "object-literal-sort-keys": false,
         "no-consecutive-blank-lines": false,
-        "indent": [true, "spaces", 4]
+        "indent": [true, "spaces", 4],
+        "no-console": false
     }
 }

@@ -1,13 +1,21 @@
 import { browser, Runtime } from 'webextension-polyfill-ts';
+import { render } from 'preact';
+import { h } from 'preact';
+import htm from 'htm';
+import ScoreBar from './ScoreBar';
+
+const html = htm.bind(h);
 
 const OBSERVER_CHECK_INTERVAL = 500;
 
 export abstract class MediaScore {
+    // tslint:disable: variable-name
     private _targetObject = new Map<string, object>();
     private _observer: MutationObserver | undefined;
     private _observerCheckTimer: number | undefined;
     private _observeElement: Element | null | undefined;
     private _port: Runtime.Port;
+    // tslint:enable: variable-name
 
     constructor(
         public serviceName: string = 'unknown',
@@ -22,7 +30,7 @@ export abstract class MediaScore {
         }
     ) {
         if (
-            typeof this.observeTarget != 'string' ||
+            typeof this.observeTarget !== 'string' ||
             !this.observeTarget.length
         ) {
             throw new Error('observeTarget required! must be selector!');
@@ -59,42 +67,47 @@ export abstract class MediaScore {
     /**
      * Make sure it is a media info element.
      */
-    public isMediaInfoTarget(target: Element): Boolean {
+    public isMediaInfoTarget(target: Element): boolean {
         return false;
     }
 
     /**
      * determine how to get media information
      */
-    public async abstract getMediaInfo(target: Element): Promise<MediaInfo>;
+    public abstract async getMediaInfo(target: Element): Promise<MediaInfo>;
+
+    public abstract getAttachParent(target: Element): Element | null;
 
     /**
      * determine where to attach the scoreBar
      */
-    public abstract applyScoreBar(
-        target: Element,
-        scoreBar: Element
-    ): void;
+    public attachScoreBar(target: Element, info: MediaInfo) {
+        render(
+            html`
+                <${ScoreBar} info="${info}"><//>
+            `,
+            target
+        );
+    }
 
     private _processMessage(
-        message: { id: string; data: ScoreInfos },
+        message: { id: string; data: MediaInfo },
         port: Runtime.Port
     ) {
         const target = this._targetObject.get(message.id);
-        const scoreBar = document.createElement('score-bar');
 
         console.debug('Content page received message', message, 'from', target);
 
-        if (target == undefined) {
-            return;
+        // tslint:disable-next-line: triple-equals
+        if (target != null) {
+            const parent = this.getAttachParent(target as Element);
+
+            if (parent != null) {
+                const attachTarget = document.createElement('div');
+                parent.append(attachTarget);
+                this.attachScoreBar(attachTarget, message.data as MediaInfo);
+            }
         }
-
-        scoreBar.setAttribute('infos', JSON.stringify(message.data));
-
-        this.applyScoreBar(
-            target as Element,
-            scoreBar
-        );
 
         this._targetObject.delete(message.id);
     }
@@ -106,12 +119,16 @@ export abstract class MediaScore {
             if (this.isMediaInfoTarget(target as Element)) {
                 const mediaInfo = await this.getMediaInfo(target as Element);
 
-                if (mediaInfo.title == null || mediaInfo.id == null) {
+                if (
+                    mediaInfo.title == null ||
+                    mediaInfo.id == null ||
+                    this._targetObject.has(mediaInfo.id as string)
+                ) {
                     return;
                 }
 
-                this._targetObject.set(<string>mediaInfo.id, target);
-                
+                this._targetObject.set(mediaInfo.id as string, target);
+
                 this._port.postMessage(
                     Object.assign(
                         {

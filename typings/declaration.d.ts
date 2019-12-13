@@ -4,14 +4,8 @@ declare module '*.scss' {
     export default content;
 }
 
-declare interface ScoreInfos {
-    [providerName: string]: ScoreInfo
-}
-
-declare interface ScoreInfo {
-    score?: number
-    url?: string
-    img?: string;
+declare interface AdditionalInfos {
+    [providerName: string]: AdditionalInfo
 }
 
 declare interface MediaInfo {
@@ -22,5 +16,14 @@ declare interface MediaInfo {
     type?: string
     apiBuildVersion?: string //netflix only
     serviceName?: string
+    additional?: AdditionalInfos,
+    [propName: string]: any
+}
+
+declare interface AdditionalInfo {
+    provider?: string
+    score?: number
+    url?: string
+    img?: string
     [propName: string]: any
 }

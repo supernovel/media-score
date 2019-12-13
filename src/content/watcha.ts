@@ -1,7 +1,4 @@
-import {
-    MediaScore,
-    MediaScoreOpts
-} from './MediaScore';
+import { MediaScore, MediaScoreOpts } from './MediaScore';
 import './watcha.scss';
 
 class WatchaScore extends MediaScore {
@@ -9,26 +6,25 @@ class WatchaScore extends MediaScore {
         super('watcha', options);
     }
 
-    public applyScoreBar(target: Element, scoreBar: Element) {
-        const overlay = target.querySelector('.content-preview__info');
-
-        if (overlay != null) {
-            overlay.appendChild(scoreBar);
-        }
+    public getAttachParent(target: Element) {
+        return target.querySelector(`[class*="ContentInfo"]`);
     }
 
     public isMediaInfoTarget(target: Element) {
         return (
             target &&
             target.classList &&
-            target.classList.contains('content') &&
-            target.classList.contains('content--hovered')
+            target.classList.value != null &&
+            target.classList.contains('content-preview-enter-done') &&
+            target.classList.value.indexOf('PreviewContainer') !== -1
         );
     }
 
     public async getMediaInfo(target: Element) {
-        const cardNameElem = target.querySelector('.content__title');
-        const cardIdElem = target.querySelector('.content-preview__play-overlay');
+        const cardNameElem = target.querySelector(`[class*="ContentTitle"]`);
+        const cardIdElem = target.querySelector(
+            `[class*="PlayableContentOverlay"]`
+        );
         const info: MediaInfo = {};
 
         if (cardNameElem && cardIdElem) {
@@ -49,7 +45,7 @@ class WatchaScore extends MediaScore {
 
 (() => {
     const watchaScoreBar = new WatchaScore({
-        observeTarget: '.app__page-mount'
+        observeTarget: `[class*="HomeColumnSection"]`
     });
 
     watchaScoreBar.applyObserver();

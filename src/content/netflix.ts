@@ -1,29 +1,24 @@
-import {
-    MediaScore,
-    MediaScoreOpts
-} from './MediaScore';
+import { MediaScore, MediaScoreOpts } from './MediaScore';
 import './netflix.scss';
 
 const BUILD_IDENTIFIER_REGEXP = /\"BUILD_IDENTIFIER\":\"([a-z0-9]+)\"/;
 
 class NetflixScore extends MediaScore {
-    public apiBuildVersion?:string;
+    public apiBuildVersion?: string;
 
     constructor(options: MediaScoreOpts) {
         super('netflix', options);
-        
-        if(!this.apiBuildVersion){
+
+        if (!this.apiBuildVersion) {
             // @ts-ignore netflix
-            this.apiBuildVersion = BUILD_IDENTIFIER_REGEXP.exec(window.document.body.innerHTML)[1];
+            this.apiBuildVersion = BUILD_IDENTIFIER_REGEXP.exec(
+                window.document.body.innerHTML
+            )[1];
         }
     }
 
-    public applyScoreBar(target: Element, scoreBar: Element) {
-        const overlay = target.querySelector('.bob-overview');
-
-        if (overlay != null) {
-            overlay.append(scoreBar);
-        }
+    public getAttachParent(target: Element) {
+        return target.querySelector('.bob-overview');
     }
 
     public isMediaInfoTarget(target: Element) {

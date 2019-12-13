@@ -6,9 +6,6 @@ import TerserPlugin from 'terser-webpack-plugin';
 const hashNameExclude = ['ScoreBar'];
 
 const config = {
-    entry: {
-        'ScoreBar': './customElement/ScoreBar.ts'
-    },
     output: {
         filename: (chunkData) => {
             if(process.env.NODE_ENV === 'production' 
@@ -65,7 +62,11 @@ const config = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
-        plugins: [new TsconfigPathsPlugin()]
+        plugins: [new TsconfigPathsPlugin()],
+        alias: {
+            "react": "preact/compat",
+            "react-dom": "preact/compat"
+        }
     },
     plugins: [
         new EventHooksPlugin({
