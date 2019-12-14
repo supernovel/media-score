@@ -1,6 +1,6 @@
 import htm from 'htm';
 import { h, render } from 'preact';
-import { interval, Observable } from 'rxjs';
+import { interval, Observable, of } from 'rxjs';
 import {
     concatAll,
     concatMap,
@@ -8,7 +8,8 @@ import {
     filter,
     first,
     map,
-    tap
+    tap,
+    catchError
 } from 'rxjs/operators';
 import { browser, Runtime } from 'webextension-polyfill-ts';
 import ScoreBar from './ScoreBar';
@@ -110,9 +111,9 @@ export abstract class MediaScore {
             )
             .pipe(
                 concatMap(element =>
-                    observeOnMutation(element, mutationObserverOptions).pipe(
-                        concatAll()
-                    )
+                    observeOnMutation(element, mutationObserverOptions)
+                        .pipe(concatAll())
+                        .pipe(catchError(error => of<MutationRecord>()))
                 ),
                 map(record => record.target as Element),
                 filter(element => this.checkTarget(element)),
@@ -133,7 +134,7 @@ export abstract class MediaScore {
                         return () => {
                             isSubscribe = false;
                         };
-                    });
+                    }).pipe(catchError(error => of<RenderArgs>()));
                 }),
                 map(({ element, info }: RenderArgs) => {
                     const parent = this.getAttachParent(element);
@@ -175,14 +176,16 @@ export abstract class MediaScore {
                                 info
                             )
                         });
-                    });
+                    }).pipe(catchError(error => of<RenderArgs>()));
                 }),
                 filter(
-                    ({ element }: RenderArgs) => element.parentElement != null
+                    ({ element }: RenderArgs) =>
+                        element != null && element.parentElement != null
                 ),
                 tap(console.debug),
                 tap(this.render)
             )
+            .pipe(catchError(error => of<RenderArgs>()))
             .subscribe();
     }
 
