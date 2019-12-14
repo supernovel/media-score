@@ -18,10 +18,10 @@ const LANGUAGE_TAG: { [langCode: string]: string } = {
             return;
         }
 
-        port.onMessage.addListener(async (message: MediaInfo, port) => {
+        port.onMessage.addListener(async (message: MediaInfoMessage, port) => {
             console.debug(`BG page received message ${message} from ${port}`);
 
-            const cacheKey = `${message.serviceName}_${message.id}`;
+            const cacheKey = `${message.data.serviceName}_${message.id}`;
 
             try {
                 return port.postMessage(await cache.get({ cacheKey }));
@@ -31,8 +31,11 @@ const LANGUAGE_TAG: { [langCode: string]: string } = {
                 );
             }
 
-            const mediaInfo: MediaInfo = await getBaseInfo(message);
-            const additionalInfos: AdditionalInfos = await getInfo(mediaInfo, locale);
+            const mediaInfo: MediaInfo = await getBaseInfo(message.data);
+            const additionalInfos: AdditionalInfos = await getInfo(
+                mediaInfo,
+                locale
+            );
             const scoreMessage = {
                 id: message.id,
                 data: Object.assign(mediaInfo, { additional: additionalInfos })

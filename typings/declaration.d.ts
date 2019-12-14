@@ -8,6 +8,11 @@ declare interface AdditionalInfos {
     [providerName: string]: AdditionalInfo
 }
 
+declare interface MediaInfoMessage {
+    id: string;
+    data: MediaInfo;
+}
+
 declare interface MediaInfo {
     id?: string|number
     title?: string

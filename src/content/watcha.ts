@@ -3,14 +3,18 @@ import './watcha.scss';
 
 class WatchaScore extends MediaScore {
     constructor(options: MediaScoreOpts) {
-        super('watcha', options);
+        super(
+            Object.assign(options, {
+                serviceName: 'watcha'
+            })
+        );
     }
 
-    public getAttachParent(target: Element) {
+    protected getAttachParent(target: Element) {
         return target.querySelector(`[class*="ContentInfo"]`);
     }
 
-    public isMediaInfoTarget(target: Element) {
+    protected checkTarget(target: Element) {
         return (
             target &&
             target.classList &&
@@ -20,7 +24,7 @@ class WatchaScore extends MediaScore {
         );
     }
 
-    public async getMediaInfo(target: Element) {
+    protected async getMediaInfo(target: Element) {
         const cardNameElem = target.querySelector(`[class*="ContentTitle"]`);
         const cardIdElem = target.querySelector(
             `[class*="PlayableContentOverlay"]`
@@ -30,8 +34,6 @@ class WatchaScore extends MediaScore {
         if (cardNameElem && cardIdElem) {
             const cardName = cardNameElem.textContent;
             const cardId = cardIdElem.getAttribute('href');
-
-            console.debug(cardName, cardId);
 
             if (cardName && cardId) {
                 info.title = cardName;
@@ -43,10 +45,10 @@ class WatchaScore extends MediaScore {
     }
 }
 
-(() => {
+(function run() {
     const watchaScoreBar = new WatchaScore({
-        observeTarget: `[class*="HomeColumnSection"]`
+        oberveRootSelector: `[class*="HomeColumnSection"]`
     });
 
-    watchaScoreBar.applyObserver();
+    watchaScoreBar.observe();
 })();

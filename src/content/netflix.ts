@@ -4,10 +4,14 @@ import './netflix.scss';
 const BUILD_IDENTIFIER_REGEXP = /\"BUILD_IDENTIFIER\":\"([a-z0-9]+)\"/;
 
 class NetflixScore extends MediaScore {
-    public apiBuildVersion?: string;
+    private apiBuildVersion?: string;
 
     constructor(options: MediaScoreOpts) {
-        super('netflix', options);
+        super(
+            Object.assign(options, {
+                serviceName: 'netflix'
+            })
+        );
 
         if (!this.apiBuildVersion) {
             // @ts-ignore netflix
@@ -17,11 +21,11 @@ class NetflixScore extends MediaScore {
         }
     }
 
-    public getAttachParent(target: Element) {
+    protected getAttachParent(target: Element) {
         return target.querySelector('.bob-overview');
     }
 
-    public isMediaInfoTarget(target: Element) {
+    protected checkTarget(target: Element) {
         return (
             target &&
             target.classList &&
@@ -30,7 +34,7 @@ class NetflixScore extends MediaScore {
         );
     }
 
-    public async getMediaInfo(target: Element) {
+    protected async getMediaInfo(target: Element) {
         const cardLink = target.querySelector('a');
         const info: MediaInfo = {
             apiBuildVersion: this.apiBuildVersion
@@ -39,8 +43,6 @@ class NetflixScore extends MediaScore {
         if (cardLink) {
             const cardName = cardLink.getAttribute('aria-label');
             const cardId = cardLink.getAttribute('href');
-
-            console.debug(cardName, cardId);
 
             if (cardName && cardId) {
                 info.title = cardName;
@@ -52,10 +54,10 @@ class NetflixScore extends MediaScore {
     }
 }
 
-(() => {
+(function run() {
     const netflixScoreBar = new NetflixScore({
-        observeTarget: '.mainView'
+        oberveRootSelector: '.mainView'
     });
 
-    netflixScoreBar.applyObserver();
+    netflixScoreBar.observe();
 })();

@@ -10,16 +10,26 @@ const ScoreBarWrapper = styled.div`
 `;
 
 export default function ScoreBar({ info }: { info: MediaInfo }) {
-    return html`
-        <${ScoreBarWrapper}>
-            ${Object.entries(info.additional || {}).map(value => {
-                const [provider, additionalInfo ] = value;
+    const isLoading: boolean = info.additional == null;
+    let children;
 
-                return html`
-                    <${ScoreItem} provider="${provider}" info="${additionalInfo}"><//>
-                `;
-            })}
-        <//>
+    if (isLoading) {
+        children = html`<div>Loading...</div>`;
+    } else {
+        children = Object.entries(info.additional || {}).map(value => {
+            const [provider, additionalInfo] = value;
+
+            return html`
+                <${ScoreItem}
+                    provider="${provider}"
+                    info="${additionalInfo}"
+                ><//>
+            `;
+        });
+    }
+
+    return html`
+        <${ScoreBarWrapper}> ${children} <//>
     `;
 }
 
