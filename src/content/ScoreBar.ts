@@ -10,7 +10,7 @@ const ScoreBarWrapper = styled.div`
     pointer-events: all;
     padding: 5px;
     line-height: 1;
-    font-size: calc(14px + (20 - 12) * ((100vw - 300px) / (1600 - 300)));
+    font-size: calc(12px + 6 * ((100vw - 300px) / (1600 - 300)));
 
     .loadingText {
         margin-left: 5px;
