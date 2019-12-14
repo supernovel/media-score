@@ -127,9 +127,7 @@ export abstract class MediaScore {
                                     isSubscribe &&
                                     observer.next({ element, info: value })
                             )
-                            .catch(
-                                error => isSubscribe && observer.error(error)
-                            )
+                            .catch(error => console.error(error))
                             .finally(() => isSubscribe && observer.complete());
 
                         return () => {
