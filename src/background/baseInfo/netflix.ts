@@ -4,19 +4,19 @@ import axios from 'axios';
 const NEFLIX_API_URL = 'https://www.netflix.com/api/shakti';
 
 /**
- * 
+ *
  * @url https://www.netflix.com/api/shakti/:apiBuildVersion/pathEvaluator?languages=en
  * @header Content-Type:application/x-www-form-urlencoded
- * @data {path: [ 
+ * @data {path: [
  *          '["videos", :id ,["availability","bookmarkPosition","creditsOffset"]]',
- *          '["videos", :id ,"preplay",254015180,"experience"]' 
+ *          '["videos", :id ,"preplay",254015180,"experience"]'
  *       ]}
  */
-export async function getBaseInfo({ id, apiBuildVersion }: MediaInfo){
+export async function getBaseInfo({ id, apiBuildVersion }: MediaInfo) {
     const response = await axios.post(
         `${NEFLIX_API_URL}/${apiBuildVersion}/pathEvaluator?languages=en`,
         qs.stringify({
-            'path': [`["videos",${id},["summary","title","releaseYear"]]`]
+            path: [`["videos",${id},["summary","title","releaseYear"]]`]
         }),
         {
             headers: {
@@ -26,31 +26,31 @@ export async function getBaseInfo({ id, apiBuildVersion }: MediaInfo){
     );
     const data: NetflixSubInfoResponse = response.data.value;
 
-    try{
+    try {
         return {
             titleEn: data.videos[id!].title,
             year: data.videos[id!].releaseYear,
             type: data.videos[id!].summary.type
         };
-    }catch(e){}
+    } catch (e) {}
 }
 
-interface NetflixSubInfoResponse{
+interface NetflixSubInfoResponse {
     videos: {
-        [videoId:string]: {
-            title: string,
-            releaseYear: number,
+        [videoId: string]: {
+            title: string;
+            releaseYear: number;
             summary: {
-                id: number,
-                type: string,
-                isNSRE: boolean,
-                isOriginal: boolean,
-            }
-        }
-    },
+                id: number;
+                type: string;
+                isNSRE: boolean;
+                isOriginal: boolean;
+            };
+        };
+    };
     genres: {
         [genresId: string]: {
-            name: string
-        }
-    }
+            name: string;
+        };
+    };
 }

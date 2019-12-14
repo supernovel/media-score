@@ -1,11 +1,11 @@
 {
     "extensionName": {
-      "message": "Media Score",
-      "description": "Name of the extension."
+        "message": "Media Score",
+        "description": "Name of the extension."
     },
-  
+
     "extensionDescription": {
-      "message": "Show user score on the media list in ott service(Netflix, Play.watcha).",
-      "description": "Description of the extension."
+        "message": "Show user score on the media list in ott service(Netflix, Play.watcha).",
+        "description": "Description of the extension."
     }
 }

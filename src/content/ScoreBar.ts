@@ -14,7 +14,9 @@ export default function ScoreBar({ info }: { info: MediaInfo }) {
     let children;
 
     if (isLoading) {
-        children = html`<div>Loading...</div>`;
+        children = html`
+            <div>Loading...</div>
+        `;
     } else {
         children = Object.entries(info.additional || {}).map(value => {
             const [provider, additionalInfo] = value;

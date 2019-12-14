@@ -5,7 +5,7 @@ declare module '*.scss' {
 }
 
 declare interface AdditionalInfos {
-    [providerName: string]: AdditionalInfo
+    [providerName: string]: AdditionalInfo;
 }
 
 declare interface MediaInfoMessage {
@@ -14,21 +14,21 @@ declare interface MediaInfoMessage {
 }
 
 declare interface MediaInfo {
-    id?: string|number
-    title?: string
-    titleEn?: string
-    year?: string|number
-    type?: string
-    apiBuildVersion?: string //netflix only
-    serviceName?: string
-    additional?: AdditionalInfos,
-    [propName: string]: any
+    id?: string | number;
+    title?: string;
+    titleEn?: string;
+    year?: string | number;
+    type?: string;
+    apiBuildVersion?: string; //netflix only
+    serviceName?: string;
+    additional?: AdditionalInfos;
+    [propName: string]: any;
 }
 
 declare interface AdditionalInfo {
-    provider?: string
-    score?: number
-    url?: string
-    img?: string
-    [propName: string]: any
+    provider?: string;
+    score?: number;
+    url?: string;
+    img?: string;
+    [propName: string]: any;
 }

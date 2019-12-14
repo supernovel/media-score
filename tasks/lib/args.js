@@ -6,8 +6,8 @@
 
 const yargs = require('yargs');
 
-const NODE_ENV = (process.env.NODE_ENV || '').replace(/[^a-z]/,'');
-const VENDOR = (process.env.VENDOR || '').replace(/[^a-z]/,'');
+const NODE_ENV = (process.env.NODE_ENV || '').replace(/[^a-z]/, '');
+const VENDOR = (process.env.VENDOR || '').replace(/[^a-z]/, '');
 
 const args = yargs
     .option('production', {
@@ -27,7 +27,9 @@ const args = yargs
     })
     .option('vendor', {
         string: true,
-        default: ['chrome', 'firefox', 'opera'].includes(VENDOR) ?  VENDOR : 'chrome',
+        default: ['chrome', 'firefox', 'opera'].includes(VENDOR)
+            ? VENDOR
+            : 'chrome',
         describe: 'Compile the extension for different vendors',
         choices: ['chrome', 'firefox', 'opera']
     })
@@ -41,7 +43,7 @@ if (typeof args.sourcemaps === 'undefined') {
     args.sourcemaps = !args.production;
 }
 
-process.env.NODE_ENV = args.production ? 'production': 'development';
+process.env.NODE_ENV = args.production ? 'production' : 'development';
 process.env.VENDOR = args.vendor;
 
 module.exports = args;

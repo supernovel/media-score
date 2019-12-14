@@ -7,7 +7,7 @@ const TYPE: { [key: string]: string } = {
 const REQUEST_HEADER = {
     'x-watchaplay-client-version': '1.0.0',
     'x-watchaplay-client': 'WatchaPlay-WebApp',
-    'accept': 'application/vnd.frograms+json;version=4'
+    accept: 'application/vnd.frograms+json;version=4'
 };
 
 export async function getBaseInfo({ id }: MediaInfo) {

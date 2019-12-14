@@ -4,7 +4,7 @@ import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 const config = {
     mode: 'development',
     target: 'node',
-    externals: [nodeExternals({whitelist: /^lodash-es/ })],
+    externals: [nodeExternals({ whitelist: /^lodash-es/ })],
     module: {
         rules: [
             {
@@ -12,7 +12,7 @@ const config = {
                 exclude: /(node_modules|bower_components)/,
                 use: [
                     {
-                        loader: 'ts-loader',
+                        loader: 'ts-loader'
                     }
                 ]
             },
@@ -28,7 +28,7 @@ const config = {
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
         plugins: [new TsconfigPathsPlugin()]
-    },
+    }
 };
 
 export default config;

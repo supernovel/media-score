@@ -8,8 +8,7 @@ import {
     filter,
     first,
     map,
-    tap,
-    catchError
+    tap
 } from 'rxjs/operators';
 import { browser, Runtime } from 'webextension-polyfill-ts';
 import ScoreBar from './ScoreBar';

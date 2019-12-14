@@ -37,11 +37,11 @@ export default async function getEntryToPage({
             const scriptPaths = [];
 
             // Read file
-            
+
             let pageFile = preprocess(
-                    await fs.readFile(pagePath, 'utf8'), 
-                    pageExtName
-                );
+                await fs.readFile(pagePath, 'utf8'),
+                pageExtName
+            );
             let result, insertIndex;
 
             // Get script tag
@@ -59,13 +59,16 @@ export default async function getEntryToPage({
                 }
 
                 // Remove script tag
-                pageFile = `${pageFile.slice(0, index)}${pageFile.slice(index + length)}`;
+                pageFile = `${pageFile.slice(0, index)}${pageFile.slice(
+                    index + length
+                )}`;
             }
 
             // Mark script tag place
-            pageFile = `${pageFile.slice(0, insertIndex)}{{${targetName}}}${pageFile.slice(
+            pageFile = `${pageFile.slice(
+                0,
                 insertIndex
-            )}`;
+            )}{{${targetName}}}${pageFile.slice(insertIndex)}`;
 
             entry[targetName] = scriptPaths;
             set(manifest, targetPath, `${targetName}.html`);
@@ -77,8 +80,8 @@ export default async function getEntryToPage({
     }
 }
 
-function preprocess(file, extName){
-    switch(extName){
+function preprocess(file, extName) {
+    switch (extName) {
         case '.pug':
         case '.jade':
             return pug.render(file);

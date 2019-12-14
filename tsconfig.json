@@ -20,6 +20,11 @@
         "typeRoots": ["node_modules/web-ext-types"],
         "lib": ["esnext.array", "esnext", "es2017", "dom", "dom.iterable"]
     },
-    "include": ["src/**/*.ts", "src/**/*.tsx", "typings/**/*.ts", "lib/**/*.ts"],
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "typings/**/*.ts",
+        "lib/**/*.ts"
+    ],
     "exclude": ["node_modules"]
 }

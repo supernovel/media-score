@@ -1,27 +1,27 @@
 //babel.config.js
-module.exports = (api) => {
+module.exports = api => {
     const isTest = api.env('test');
-    const isLoader = api.caller((caller) => {
-        return !!(caller && (caller.name == 'babel-loader'));
+    const isLoader = api.caller(caller => {
+        return !!(caller && caller.name == 'babel-loader');
     });
 
-    if(isLoader){
+    if (isLoader) {
         return {
             presets: ['@babel/preset-env'],
             plugins: ['@babel/plugin-transform-runtime']
-        }
+        };
     } else {
         return {
             presets: [
                 [
                     '@babel/preset-env',
                     {
-                        'targets': {
-                            'node': 'current'
+                        targets: {
+                            node: 'current'
                         }
                     }
                 ]
             ]
         };
     }
-}
+};

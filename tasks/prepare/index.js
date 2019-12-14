@@ -59,12 +59,12 @@ export default async function preparingScripts() {
 
         //Get webpack entry
         Object.assign(
-            entryMapping, 
+            entryMapping,
             getEntryToBackground({ manifest, entry, basePath: MANIFEST_PATH })
         );
 
         Object.assign(
-            entryMapping, 
+            entryMapping,
             getEntryToContent({ manifest, entry, basePath: MANIFEST_PATH })
         );
 

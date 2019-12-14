@@ -14,13 +14,13 @@ gulp.task('test:clean', () => {
     return del([path.resolve(TEST_PATH, '*.b.js')]);
 });
 
-gulp.task('test:build', gulp.series(
-    'test:clean', 
-    async () => {
+gulp.task(
+    'test:build',
+    gulp.series('test:clean', async () => {
         const testFiles = await fg.async(path.resolve(TEST_PATH, '*.ts'));
         const testEntry = {};
 
-        testFiles.forEach((file) => {
+        testFiles.forEach(file => {
             const basename = path.basename(file, '.ts');
             testEntry[`${basename}.b`] = file;
         });
@@ -32,11 +32,15 @@ gulp.task('test:build', gulp.series(
                 filename: '[name].js'
             }
         });
-        
+
         await new Promise((resolve, reject) => {
             webpack(config, async (err, stats) => {
                 if (err || stats.hasErrors()) {
-                    log(`${colors.redBright('Error')} '${colors.cyan('scripts:test')}': ${err || stats.toJson().errors}`);
+                    log(
+                        `${colors.redBright('Error')} '${colors.cyan(
+                            'scripts:test'
+                        )}': ${err || stats.toJson().errors}`
+                    );
                     reject(err || stats);
                 } else {
                     log(`Finished '${colors.cyan('scripts:test')}'`);

@@ -71,7 +71,7 @@ export function findItem({
 
                 if (itemValue != null) {
                     itemValue = nomalizeValue(findType, itemValue);
-                    
+
                     let isEqual: boolean = itemValue === findValue;
 
                     if (!isEqual && typeof itemValue === 'string') {

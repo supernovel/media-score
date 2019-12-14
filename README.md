@@ -1,4 +1,5 @@
 ## Media Score
+
 <img src="./example.jpg" width="300" style="margin-left:2rem"/>
 
 -   Show user score on the media list in ott service (browser extension)
@@ -13,10 +14,11 @@
     -   Imdb
     -   RottenTomatoes
 -   <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" 		    title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" 		    title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div
-- Use lit-element(webcomponents)
+-   Use lit-element(webcomponents)
 
 ## Todo
-- [ ] Add Option page
+
+-   [ ] Add Option page
 
 ## Build
 
