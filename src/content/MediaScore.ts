@@ -119,7 +119,8 @@ export abstract class MediaScore {
                 debounceTime(OBSERVER_DEBOUNCE_TIME),
                 concatMap(element => {
                     return new Observable<RenderArgs>(observer => {
-                        let isSubscribe: boolean = true;
+                        let isSubscribe = true;
+
                         Promise.resolve(this.getMediaInfo(element))
                             .then(
                                 value =>

@@ -63,11 +63,11 @@ export async function getInfo(
     });
 
     if (item) {
-        const { ratings_avg, code } = item as WatchaItem;
+        const { ratings_avg: ratingsAvg, code } = item as WatchaItem;
 
         return {
             provider: PROVIDER,
-            score: (ratings_avg || 0) * 10,
+            score: (ratingsAvg || 0) * 10,
             url: `${DOMAIN}/${locale}/contents/${code}`,
             img: ICON
         };

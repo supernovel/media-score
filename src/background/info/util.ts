@@ -51,8 +51,7 @@ export function findItem({
     if (items && items instanceof Array && items.length) {
         let matchedItems = items;
 
-        // tslint:disable-next-line: prefer-const
-        for (let query of queries) {
+        for (const query of queries) {
             const keys = wrapArray(query.key);
             const findType = query.type;
             const findValue = nomalizeValue(findType, query.find);
@@ -60,8 +59,7 @@ export function findItem({
             matchedItems = matchedItems.filter(item => {
                 let itemValue;
 
-                // tslint:disable-next-line: prefer-const
-                for (let key of keys) {
+                for (const key of keys) {
                     itemValue = get(item, key);
 
                     if (itemValue != null) {

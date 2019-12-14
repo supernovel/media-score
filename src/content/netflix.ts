@@ -14,10 +14,13 @@ class NetflixScore extends MediaScore {
         );
 
         if (!this.apiBuildVersion) {
-            // @ts-ignore netflix
-            this.apiBuildVersion = BUILD_IDENTIFIER_REGEXP.exec(
+            const groups = BUILD_IDENTIFIER_REGEXP.exec(
                 window.document.body.innerHTML
-            )[1];
+            );
+
+            if (groups != null) {
+                this.apiBuildVersion = groups[1];
+            }
         }
     }
 

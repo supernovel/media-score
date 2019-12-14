@@ -44,12 +44,12 @@ export async function getInfo(
     });
 
     if (item) {
-        const { vote_average, media_type, id } = item;
+        const { vote_average: voteAverage, media_type: mediaType, id } = item;
 
         return {
             provider: PROVIDER,
-            score: (vote_average || 0) * 10,
-            url: `${DOMAIN}/${media_type}/${id}?language=${locale}`,
+            score: (voteAverage || 0) * 10,
+            url: `${DOMAIN}/${mediaType}/${id}?language=${locale}`,
             img: ICON
         };
     } else {
