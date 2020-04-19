@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { browser } from 'webextension-polyfill-ts';
 import { findItem, parseLocale } from './util';
 
 const PROVIDER = 'watcha';
-const ICON = 'https://watcha.com/favicon.ico';
+const ICON = browser.extension.getURL('/images/watcha.png');
 const DOMAIN = 'https://watcha.com';
 const API_DOMAIN = 'https://api.watcha.com';
 const REQUEST_URL = `${API_DOMAIN}/api/searches`;

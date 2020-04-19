@@ -10,6 +10,9 @@
         "48": "images/icon_48.png",
         "128": "images/icon_128.png"
     },
+    "web_accessible_resources": [
+        "images/*.png"
+    ],    
     "permissions": [
         "*://*.netflix.com/*",
         "*://*.watcha.com/*",

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { browser } from 'webextension-polyfill-ts';
 import { findItem } from './util';
 
 const PROVIDER = 'tmdb';
-const ICON = 'https://www.themoviedb.org/favicon.ico';
+const ICON = browser.extension.getURL('/images/tmdb.png');
 const DOMAIN = 'https://www.themoviedb.org';
 const REQUEST_URL = `${DOMAIN}/search/multi`;
 
