@@ -1,7 +1,7 @@
 {
     "name": "media-score",
     "extensionName": "Media Score",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "Show user score on the media list in ott service(Netflix, Play.watcha).",
     "main": "src/manifast.json",
     "scripts": {
