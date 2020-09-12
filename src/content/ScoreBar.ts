@@ -10,9 +10,7 @@ const ScoreBarWrapper = styled.div`
     pointer-events: all;
     padding: 5px;
     line-height: 1;
-    font-size: ${props =>
-        `calc(${props.fontSize ||
-            12}px + 6 * ((100vw - 1280px) / (1600 - 1280)))`};
+    font-size: 14px;
 
     .loadingText {
         margin-left: 5px;
@@ -49,7 +47,7 @@ export default function ScoreBar({ info }: { info: MediaInfo }) {
 const ScoreItemWrapper = styled.div`
     display: flex;
     align-items: center;
-    margin-right: 0.5rem;
+    margin-right: 0.5em;
     pointer-events: all;
     cursor: pointer;
 
@@ -89,8 +87,8 @@ function ScoreItem({ info, provider }) {
     };
 
     return html`
-        <${ScoreItemWrapper} hidden="${hidden}">
-            <img src="${info.img}" title="${provider}" onClick="${openPage}" />
+        <${ScoreItemWrapper} hidden="${hidden}" onClick="${openPage}">
+            <img src="${info.img}" title="${provider}" />
             <span>${score}</span>
         <//>
     `;
