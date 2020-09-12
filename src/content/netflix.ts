@@ -25,26 +25,26 @@ class NetflixScore extends MediaScore {
     }
 
     protected getAttachParent(target: Element) {
-        return target.querySelector('.bob-overview');
+        return target.querySelector('.mini-modal-container');
     }
 
     protected checkTarget(target: Element) {
         return (
             target &&
             target.classList &&
-            target.classList.contains('title-card') &&
-            target.classList.contains('is-bob-open')
+            target.classList.contains('mini-modal')
         );
     }
 
     protected async getMediaInfo(target: Element) {
-        const cardLink = target.querySelector('a');
+        const cardImg = target.querySelector('img.previewModal--boxart');
+        const cardLink = target.querySelector('a.playLink');
         const info: MediaInfo = {
             apiBuildVersion: this.apiBuildVersion
         };
 
-        if (cardLink) {
-            const cardName = cardLink.getAttribute('aria-label');
+        if (cardImg != null && cardLink != null) {
+            const cardName = cardImg.getAttribute('alt');
             const cardId = cardLink.getAttribute('href');
 
             if (cardName && cardId) {
@@ -59,7 +59,13 @@ class NetflixScore extends MediaScore {
 
 (function run() {
     const netflixScoreBar = new NetflixScore({
-        oberveRootSelector: '.mainView'
+        oberveRootSelector: '#appMountPoint',
+        mutationObserverOptions: {
+            attributes: true,
+            childList: true,
+            characterData: false,
+            subtree: true
+        }
     });
 
     netflixScoreBar.observe();
