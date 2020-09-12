@@ -18,6 +18,7 @@ const html = htm.bind(h);
 
 const OBSERVER_CHECK_INTERVAL = 500;
 const OBSERVER_DEBOUNCE_TIME = 300;
+const MediaScoreWrapperClass = 'media-score-wrapper';
 
 const observeOnPort = (port: Runtime.Port): Observable<MediaInfoMessage> => {
     return new Observable(observer => {
@@ -142,6 +143,7 @@ export abstract class MediaScore {
 
                     if (parent != null) {
                         attachTarget = document.createElement('div');
+                        attachTarget.classList.add(MediaScoreWrapperClass);
                         parent.append(attachTarget);
                     }
 
