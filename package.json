@@ -1,7 +1,7 @@
 {
     "name": "media-score",
     "extensionName": "Media Score for 넷플릭스(Neflix), 왓챠 플레이(Play.watcha)",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "description": "Show user score on the media list in ott service(Netflix, Play.watcha).",
     "main": "src/manifast.json",
     "scripts": {
