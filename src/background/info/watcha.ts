@@ -4,8 +4,8 @@ import { findItem, parseLocale } from './util';
 
 const PROVIDER = 'watcha';
 const ICON = browser.extension.getURL('/images/watcha.png');
-const DOMAIN = 'https://watcha.com';
-const API_DOMAIN = 'https://api.watcha.com';
+const DOMAIN = 'https://pedia.watcha.com';
+const API_DOMAIN = 'https://api-pedia.watcha.com';
 const REQUEST_URL = `${API_DOMAIN}/api/searches`;
 const REQUEST_HEADER = {
     'x-watcha-client-version': '1.0.0',
@@ -13,7 +13,7 @@ const REQUEST_HEADER = {
 };
 
 /**
- * @url https://api.watcha.com/api/searches?query=:title
+ * @url https://api-pedia.watcha.com/api/searches?query=:title
  * @header x-watcha-client-version:1.0.0
  * @header x-watcha-client Watcha-WebApp
  * @header x-watcha-client-language: en|ko
