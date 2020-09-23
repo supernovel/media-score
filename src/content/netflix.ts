@@ -29,9 +29,11 @@ class NetflixScore extends MediaScore {
     }
 
     protected checkTarget(target: Element) {
+        console.log(target.classList);
         return (
             target &&
             target.classList &&
+            target.classList.contains('previewModal--wrapper') &&
             target.classList.contains('mini-modal')
         );
     }
