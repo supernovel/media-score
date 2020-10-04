@@ -10,9 +10,7 @@
         "48": "images/icon_48.png",
         "128": "images/icon_128.png"
     },
-    "web_accessible_resources": [
-        "images/*.png"
-    ],    
+    "web_accessible_resources": ["images/*.png"],
     "permissions": [
         "*://*.netflix.com/*",
         "*://*.watcha.com/*",
@@ -34,7 +32,7 @@
             "js": ["content/netflix.ts"]
         },
         {
-            "matches": ["*://play.watcha.net/*"],
+            "matches": ["*://*.watcha.com/*"],
             "js": ["content/watcha.ts"]
         }
     ],
