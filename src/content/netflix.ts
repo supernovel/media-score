@@ -24,18 +24,12 @@ class NetflixScore extends MediaScore {
     }
   }
 
-  protected getAttachParent(target: Element) {
+  protected getAttachTarget(target: Element) {
     return target.querySelector('.mini-modal-container');
   }
 
-  protected checkTriggerTarget(target: Element) {
-    return (
-      target && target.classList && target.classList.contains('mini-modal')
-    );
-  }
-
   protected getInfoTarget(target: Element) {
-    return target.closest('.previewModal--wrapper') ?? target;
+    return target.querySelector('.previewModal--wrapper') ?? target;
   }
 
   protected async getMediaInfo(target: Element) {
@@ -62,12 +56,6 @@ class NetflixScore extends MediaScore {
 (function run() {
   const netflixScoreBar = new NetflixScore({
     observeRootSelector: '#appMountPoint',
-    mutationObserverOptions: {
-      attributes: true,
-      childList: true,
-      characterData: false,
-      subtree: true,
-    },
   });
 
   netflixScoreBar.observe();

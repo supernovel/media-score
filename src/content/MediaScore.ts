@@ -1,15 +1,12 @@
 import htm from 'htm';
 import { h, render } from 'preact';
-import { interval, Observable, of } from 'rxjs';
+import { Observable, interval, of } from 'rxjs';
 import {
-  concatAll,
-  concatMap,
-  debounceTime,
-  filter,
-  first,
-  map,
-  tap,
   catchError,
+  concatMap,
+  filter,
+  map,
+  tap
 } from 'rxjs/operators';
 import browser, { Runtime } from 'webextension-polyfill';
 import ScoreBar from './ScoreBar';
@@ -17,7 +14,6 @@ import ScoreBar from './ScoreBar';
 const html = htm.bind(h);
 
 const OBSERVER_CHECK_INTERVAL = 500;
-const OBSERVER_DEBOUNCE_TIME = 300;
 const MediaScoreWrapperClass = 'media-score-wrapper';
 
 const observeOnPort = (port: Runtime.Port): Observable<MediaInfoMessage> => {
@@ -36,22 +32,6 @@ const observeOnPort = (port: Runtime.Port): Observable<MediaInfoMessage> => {
   });
 };
 
-const observeOnMutation = (
-  target: Node,
-  config?: MutationObserverInit,
-): Observable<MutationRecord[]> => {
-  return new Observable((observer) => {
-    const mutation = new MutationObserver((mutations) => {
-      observer.next(mutations);
-    });
-    mutation.observe(target, config);
-    const unsubscribe = () => {
-      mutation.disconnect();
-    };
-    return unsubscribe;
-  });
-};
-
 export abstract class MediaScore {
   private port: Runtime.Port;
   private portStream: Observable<{ id: string; data: MediaInfo }>;
@@ -59,8 +39,7 @@ export abstract class MediaScore {
   constructor(
     public options: MediaScoreOpts, // public serviceName: string = 'unknown',
   ) {
-    const { serviceName, observeRootSelector, mutationObserverOptions } =
-      options;
+    const { serviceName, observeRootSelector } = options;
 
     if (
       typeof observeRootSelector !== 'string' ||
@@ -70,16 +49,6 @@ export abstract class MediaScore {
     }
 
     this.options.serviceName = serviceName || 'unknown';
-    this.options.mutationObserverOptions = Object.assign(
-      {
-        attributes: true,
-        attributeFilter: ['class'],
-        childList: false,
-        characterData: false,
-        subtree: true,
-      },
-      mutationObserverOptions,
-    );
 
     this.port = browser.runtime.connect(undefined, {
       name: 'media_score',
@@ -88,8 +57,7 @@ export abstract class MediaScore {
   }
 
   public observe() {
-    const { serviceName, observeRootSelector, mutationObserverOptions } =
-      this.options;
+    const { serviceName, observeRootSelector } = this.options;
 
     if (observeRootSelector == null) {
       return;
@@ -99,31 +67,22 @@ export abstract class MediaScore {
       .pipe(
         map((): Element | null => document.querySelector(observeRootSelector)),
         filter((element): element is Element => element != null),
-        first(),
       )
       .pipe(
-        concatMap((element) =>
-          observeOnMutation(element, mutationObserverOptions)
-            .pipe(concatAll())
-            .pipe(catchError(() => of<MutationRecord>())),
-        ),
-        map((record) => record.target as Element),
-        filter((element) => this.checkTriggerTarget(element)),
         map((element) => this.getInfoTarget(element)),
-        debounceTime(OBSERVER_DEBOUNCE_TIME),
         filter((element) => {
           if (element == null) {
             return false;
           }
 
-          const attachParent = this.getAttachParent(element);
+          const attachTarget = this.getAttachTarget(element);
 
-          if (attachParent == null) {
+          if (attachTarget == null) {
             return false;
           }
 
           if (
-            attachParent?.querySelector(`.${MediaScoreWrapperClass}`) != null
+            attachTarget?.querySelector(`.${MediaScoreWrapperClass}`) != null
           ) {
             return false;
           }
@@ -148,13 +107,13 @@ export abstract class MediaScore {
           }).pipe(catchError(() => of<RenderArgs>()));
         }),
         map(({ element, info }: RenderArgs) => {
-          const parent = this.getAttachParent(element);
-          const attachTarget = document.createElement('div');
+          const attachTarget = this.getAttachTarget(element);
+          const container = document.createElement('div');
 
-          attachTarget.classList.add(MediaScoreWrapperClass);
-          parent?.append(attachTarget);
+          container.classList.add(MediaScoreWrapperClass);
+          attachTarget?.append(container);
 
-          return { element: attachTarget, info };
+          return { element: container, info };
         }),
         filter((args?: RenderArgs) => args != null),
         tap(console.debug),
@@ -188,13 +147,8 @@ export abstract class MediaScore {
     render(html` <${ScoreBar} info="${info}"><//> `, element!);
   }
 
-  protected getAttachParent(element: Element): Element | null {
+  protected getAttachTarget(element: Element): Element | null {
     return element;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected checkTriggerTarget(_element: Element): boolean {
-    return false;
   }
 
   protected getInfoTarget(element: Element): Element {
@@ -215,5 +169,4 @@ interface RenderArgs {
 export interface MediaScoreOpts {
   serviceName?: string;
   observeRootSelector?: string;
-  mutationObserverOptions?: MutationObserverInit;
 }
