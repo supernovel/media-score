@@ -1,5 +1,5 @@
 import './options.scss';
 
 (() => {
-    console.debug('options');
+  console.debug('options');
 })();

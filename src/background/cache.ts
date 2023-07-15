@@ -9,50 +9,50 @@ const VALID_PERIOD = 7; // 7day
  * @param {number} period unsigned number
  */
 function getTimestamp(period?: number) {
-    if (period && period > 0) {
-        const currentDate = new Date();
-        return currentDate.setDate(currentDate.getDate() + period);
-    } else {
-        return Date.now();
-    }
+  if (period && period > 0) {
+    const currentDate = new Date();
+    return currentDate.setDate(currentDate.getDate() + period);
+  } else {
+    return Date.now();
+  }
 }
 
 export async function get({
-    cacheKey,
-    period
+  cacheKey,
+  period,
 }: {
-    cacheKey: string;
-    period?: number;
+  cacheKey: string;
+  period?: number;
 }) {
-    const cacheObject = await browser.storage.local.get(cacheKey);
-    let cacheValue: any = cacheObject[cacheKey];
+  const cacheObject = await browser.storage.local.get(cacheKey);
+  let cacheValue: any = cacheObject[cacheKey];
 
-    if (cacheValue) {
-        console.debug(`found: ${cacheKey}`, cacheValue);
-        cacheValue = JSON.parse(cacheValue);
-        const { timestamp, value } = cacheValue;
+  if (cacheValue) {
+    console.debug(`found: ${cacheKey}`, cacheValue);
+    cacheValue = JSON.parse(cacheValue);
+    const { timestamp, value } = cacheValue;
 
-        if (timestamp > getTimestamp(period || VALID_PERIOD)) {
-            throw Error('Expired cache');
-        } else if (value) {
-            return value;
-        }
+    if (timestamp > getTimestamp(period || VALID_PERIOD)) {
+      throw Error('Expired cache');
+    } else if (value) {
+      return value;
     }
+  }
 
-    throw Error('Not found');
+  throw Error('Not found');
 }
 
 export async function set({
-    cacheKey,
-    message
+  cacheKey,
+  message,
 }: {
-    cacheKey: string;
-    message: any;
+  cacheKey: string;
+  message: any;
 }) {
-    await browser.storage.local.set({
-        [cacheKey]: JSON.stringify({
-            timestamp: getTimestamp(),
-            value: message
-        })
-    });
+  await browser.storage.local.set({
+    [cacheKey]: JSON.stringify({
+      timestamp: getTimestamp(),
+      value: message,
+    }),
+  });
 }

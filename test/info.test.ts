@@ -11,33 +11,33 @@ const locale = 'ko-KR';
 browserEnv();
 
 const testObject = {
-    id: '80180171',
-    title: '킹덤',
-    titleEn: 'Kingdom',
-    type: 'show',
-    year: 2019
+  id: '80180171',
+  title: '킹덤',
+  titleEn: 'Kingdom',
+  type: 'show',
+  year: 2019,
 };
 
-test('Tmdb Score', async t => {
-    const data = await tmdb.getInfo(testObject, locale);
+test('Tmdb Score', async (t) => {
+  const data = await tmdb.getInfo(testObject, locale);
 
-    t.snapshot(data);
+  t.snapshot(data);
 });
 
-test('Imdb Score', async t => {
-    const data = await imdb.getInfo(testObject);
+test('Imdb Score', async (t) => {
+  const data = await imdb.getInfo(testObject);
 
-    t.snapshot(data);
+  t.snapshot(data);
 });
 
-test('Watcha Score', async t => {
-    const data = await watcha.getInfo(testObject, locale);
+test('Watcha Score', async (t) => {
+  const data = await watcha.getInfo(testObject, locale);
 
-    t.snapshot(data);
+  t.snapshot(data);
 });
 
-test('RottenTomatoes Score', async t => {
-    const data = await rottenTomatoes.getInfo(testObject);
+test('RottenTomatoes Score', async (t) => {
+  const data = await rottenTomatoes.getInfo(testObject);
 
-    t.snapshot(data);
+  t.snapshot(data);
 });

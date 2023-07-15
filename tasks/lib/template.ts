@@ -11,17 +11,17 @@ const TEMPLATE_REGEXP = /{{2}(.+?)}{2}/g;
  * @return {String}
  */
 export default function template(content, data) {
-    let result;
+  let result;
 
-    while ((result = TEMPLATE_REGEXP.exec(content)) !== null) {
-        const item = result[1].trim();
-        if (item) {
-            const value = get(data, item);
-            if (value !== undefined && value !== null) {
-                content = content.replace(result[0], value);
-            }
-        }
+  while ((result = TEMPLATE_REGEXP.exec(content)) !== null) {
+    const item = result[1].trim();
+    if (item) {
+      const value = get(data, item);
+      if (value !== undefined && value !== null) {
+        content = content.replace(result[0], value);
+      }
     }
+  }
 
-    return content;
+  return content;
 }

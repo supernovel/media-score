@@ -34,69 +34,72 @@ const MANIFEST_PATH = path.resolve(BASE_PATH, 'src'); //manifest.json place
  * }
  */
 export default async function preparingScripts() {
+  try {
     try {
-        try {
-            //make vendor folder
-            await fs.mkdir(path.resolve(BASE_PATH, `dist/${args.vendor}/`), {
-                recursive: true
-            });
-        } catch (error) {
-            log(`Error ${colors.cyan('manifest')} : ${(error as any).message}`);
-        }
-
-        const entry = {};
-        const entryMapping = {};
-        let manifest = JSON.parse(
-            template(JSON.stringify(manifestJson), packageJson)
-        );
-
-        manifest = applyBrowserPrefixesFor(args.vendor)(manifest);
-
-        if (ENV === 'development') {
-            manifest['content_security_policy'] = {
-               "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
-            };
-        }
-
-        //Get webpack entry
-        Object.assign(
-            entryMapping,
-            getEntryToBackground({ manifest, entry, basePath: MANIFEST_PATH })
-        );
-
-        Object.assign(
-            entryMapping,
-            getEntryToContent({ manifest, entry, basePath: MANIFEST_PATH })
-        );
-
-        //Get webpack entry and html
-        const popupHtml = await getEntryToPage({
-            manifest,
-            entry,
-            targetPath: 'browser_action.default_popup',
-            targetName: 'popup',
-            basePath: MANIFEST_PATH
-        });
-        const optionsHtml = await getEntryToPage({
-            manifest,
-            entry,
-            targetPath: 'options_ui.page',
-            targetName: 'options',
-            basePath: MANIFEST_PATH
-        });
-
-        return {
-            manifest: JSON.stringify(manifest),
-            entry,
-            entryMapping,
-            popupHtml,
-            optionsHtml
-        };
+      //make vendor folder
+      await fs.mkdir(path.resolve(BASE_PATH, `dist/${args.vendor}/`), {
+        recursive: true,
+      });
     } catch (error) {
-        log(
-            `Error ${colors.cyan('manifest')} : ${colors.yellow((error as any).message)}`
-        );
-
-        return {};
+      log(`Error ${colors.cyan('manifest')} : ${(error as any).message}`);
     }
+
+    const entry = {};
+    const entryMapping = {};
+    let manifest = JSON.parse(
+      template(JSON.stringify(manifestJson), packageJson),
+    );
+
+    manifest = applyBrowserPrefixesFor(args.vendor)(manifest);
+
+    if (ENV === 'development') {
+      manifest['content_security_policy'] = {
+        extension_pages:
+          "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';",
+      };
+    }
+
+    //Get webpack entry
+    Object.assign(
+      entryMapping,
+      getEntryToBackground({ manifest, entry, basePath: MANIFEST_PATH }),
+    );
+
+    Object.assign(
+      entryMapping,
+      getEntryToContent({ manifest, entry, basePath: MANIFEST_PATH }),
+    );
+
+    //Get webpack entry and html
+    const popupHtml = await getEntryToPage({
+      manifest,
+      entry,
+      targetPath: 'browser_action.default_popup',
+      targetName: 'popup',
+      basePath: MANIFEST_PATH,
+    });
+    const optionsHtml = await getEntryToPage({
+      manifest,
+      entry,
+      targetPath: 'options_ui.page',
+      targetName: 'options',
+      basePath: MANIFEST_PATH,
+    });
+
+    return {
+      manifest: JSON.stringify(manifest),
+      entry,
+      entryMapping,
+      popupHtml,
+      optionsHtml,
+    };
+  } catch (error) {
+    log(
+      `Error ${colors.cyan('manifest')} : ${colors.yellow(
+        (error as any).message,
+      )}`,
+    );
+
+    return {};
+  }
 }

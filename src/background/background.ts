@@ -1,67 +1,67 @@
-import  browser  from 'webextension-polyfill';
+import browser from 'webextension-polyfill';
 
 import * as cache from './cache';
 import getBaseInfo from './baseInfo';
 import getInfo from './info';
 
 const LANGUAGE_TAG: { [langCode: string]: string } = {
-    en: 'en-US',
-    ko: 'ko-KR',
-    ja: 'ja-JP'
+  en: 'en-US',
+  ko: 'ko-KR',
+  ja: 'ja-JP',
 };
 
 browser.runtime.onInstalled.addListener(() => {
-    const locale = LANGUAGE_TAG[browser.i18n.getUILanguage()];
+  const locale = LANGUAGE_TAG[browser.i18n.getUILanguage()];
 
-    browser.runtime.onConnect.addListener(async port => {
-        if (port.name !== 'media_score') {
-            return;
+  browser.runtime.onConnect.addListener(async (port) => {
+    if (port.name !== 'media_score') {
+      return;
+    }
+
+    port.onMessage.addListener(async (message: MediaInfoMessage, port) => {
+      try {
+        console.debug(`BG page received message ${message} from ${port}`);
+
+        const cacheKey = `${message.data.serviceName}_${message.id}`;
+
+        try {
+          return port.postMessage(await cache.get({ cacheKey }));
+        } catch (error) {
+          console.debug(
+            `found error: ${cacheKey}, error: ${(error as any).message}`,
+          );
         }
 
-        port.onMessage.addListener(async (message: MediaInfoMessage, port) => {
-            try{
-            console.debug(`BG page received message ${message} from ${port}`);
+        const mediaInfo: MediaInfo = await getBaseInfo(message.data);
+        const additionalInfos: AdditionalInfos = await getInfo(
+          mediaInfo,
+          locale,
+        );
+        const scoreMessage = {
+          id: message.id,
+          data: Object.assign(mediaInfo, { additional: additionalInfos }),
+        };
 
-            const cacheKey = `${message.data.serviceName}_${message.id}`;
+        try {
+          await cache.set({
+            cacheKey,
+            message: scoreMessage,
+          });
 
-            try {
-                return port.postMessage(await cache.get({ cacheKey }));
-            } catch (error) {
-                console.debug(
-                    `found error: ${cacheKey}, error: ${(error as any).message}`
-                );
-            }
-
-            const mediaInfo: MediaInfo = await getBaseInfo(message.data);
-            const additionalInfos: AdditionalInfos = await getInfo(
-                mediaInfo,
-                locale
-            );
-            const scoreMessage = {
-                id: message.id,
-                data: Object.assign(mediaInfo, { additional: additionalInfos })
-            };
-
-            try {
-                await cache.set({
-                    cacheKey,
-                    message: scoreMessage
-                });
-
-                console.debug(`store done: ${cacheKey}`);
-            } catch (error) {
-                console.debug(
-                    `store fail: ${cacheKey}, error: ${(error as any).message}`
-                );
-            }
-
-            return port.postMessage(scoreMessage);
-        }catch(error) {
-            return port.postMessage({
-                id: message.id,
-                data: {}
-            });
+          console.debug(`store done: ${cacheKey}`);
+        } catch (error) {
+          console.debug(
+            `store fail: ${cacheKey}, error: ${(error as any).message}`,
+          );
         }
+
+        return port.postMessage(scoreMessage);
+      } catch (error) {
+        return port.postMessage({
+          id: message.id,
+          data: {},
         });
+      }
     });
+  });
 });

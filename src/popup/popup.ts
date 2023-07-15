@@ -1,5 +1,5 @@
 import './popup.scss';
 
 (() => {
-    console.debug('popup');
+  console.debug('popup');
 })();

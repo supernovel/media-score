@@ -1,11 +1,11 @@
 {
-    "extensionName": {
-        "message": "Media Score for 넷플릭스(Neflix), 왓챠 플레이(Play.watcha)",
-        "description": "확장 프로그램 이름"
-    },
+  "extensionName": {
+    "message": "Media Score for 넷플릭스(Neflix), 왓챠 플레이(Play.watcha)",
+    "description": "확장 프로그램 이름"
+  },
 
-    "extensionDescription": {
-        "message": "ott 서비스(Netflix, Play.watcha)에서 유저 점수를 표시해줍니다.",
-        "description": "확장 프로그램 설명"
-    }
+  "extensionDescription": {
+    "message": "ott 서비스(Netflix, Play.watcha)에서 유저 점수를 표시해줍니다.",
+    "description": "확장 프로그램 설명"
+  }
 }
