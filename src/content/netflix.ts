@@ -28,14 +28,17 @@ class NetflixScore extends MediaScore {
         return target.querySelector('.mini-modal-container');
     }
 
-    protected checkTarget(target: Element) {
+    protected checkTriggerTarget(target: Element) {
         console.log(target.classList);
         return (
             target &&
             target.classList &&
-            target.classList.contains('previewModal--wrapper') &&
             target.classList.contains('mini-modal')
         );
+    }
+
+    protected getInfoTarget(target: Element) {
+        return target.closest('.previewModal--wrapper') ?? target;
     }
 
     protected async getMediaInfo(target: Element) {

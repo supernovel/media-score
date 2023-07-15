@@ -117,8 +117,27 @@ export abstract class MediaScore {
                         .pipe(catchError(error => of<MutationRecord>()))
                 ),
                 map(record => record.target as Element),
-                filter(element => this.checkTarget(element)),
+                filter(element => this.checkTriggerTarget(element)),
+                map(element => this.getInfoTarget(element)),
                 debounceTime(OBSERVER_DEBOUNCE_TIME),
+                filter((element) => {
+                        if(element == null) {
+                            return false;
+                        }
+
+                        const attachParent = this.getAttachParent(element);
+
+                        if(attachParent == null) {
+                            return false;
+                        }
+
+                        if(attachParent?.querySelector(`.${MediaScoreWrapperClass}`) != null) {
+                            return false;
+                        }
+
+                        return true;
+                    }
+                ),
                 concatMap(element => {
                     return new Observable<RenderArgs>(observer => {
                         let isSubscribe = true;
@@ -141,17 +160,14 @@ export abstract class MediaScore {
                     const parent = this.getAttachParent(element);
                     let attachTarget;
 
-                    if (parent != null) {
-                        attachTarget = document.createElement('div');
-                        attachTarget.classList.add(MediaScoreWrapperClass);
-                        parent.append(attachTarget);
-                    }
+                    attachTarget = document.createElement('div');
+                    attachTarget.classList.add(MediaScoreWrapperClass);
+                    parent?.append(attachTarget);
 
                     return { element: attachTarget, info };
                 }),
                 filter(
-                    ({ element, info }: RenderArgs) =>
-                        element != null && info.title != null && info.id != null
+                    (args?: RenderArgs) => args != null
                 ),
                 tap(console.debug),
                 tap(this.render),
@@ -162,7 +178,7 @@ export abstract class MediaScore {
                                 map(
                                     (message: MediaInfoMessage) => message.data
                                 ),
-                                filter(data => data.id === info.id)
+                                filter(data => data.id === info?.id)
                             )
                             .subscribe(data => {
                                 observer.next({ element, info: data });
@@ -170,7 +186,7 @@ export abstract class MediaScore {
                             });
 
                         this.port.postMessage({
-                            id: info.id,
+                            id: info!.id,
                             data: Object.assign(
                                 {
                                     serviceName
@@ -196,7 +212,7 @@ export abstract class MediaScore {
             html`
                 <${ScoreBar} info="${info}"><//>
             `,
-            element
+            element!
         );
     }
 
@@ -204,8 +220,12 @@ export abstract class MediaScore {
         return element;
     }
 
-    protected checkTarget(element: Element): boolean {
+    protected checkTriggerTarget(element: Element): boolean {
         return false;
+    }
+
+    protected getInfoTarget(element: Element): Element {
+        return element;
     }
 
     protected getMediaInfo(element: Element): MediaInfo {
