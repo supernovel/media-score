@@ -3,6 +3,7 @@ import browser from 'webextension-polyfill';
 import * as cache from './cache';
 import getBaseInfo from './baseInfo';
 import getInfo from './info';
+import { getErrorMessage } from './utils';
 
 const LANGUAGE_TAG: { [langCode: string]: string } = {
   en: 'en-US',
@@ -28,7 +29,7 @@ browser.runtime.onInstalled.addListener(() => {
           return port.postMessage(await cache.get({ cacheKey }));
         } catch (error) {
           console.debug(
-            `found error: ${cacheKey}, error: ${(error as any).message}`,
+            `found error: ${cacheKey}, error: ${getErrorMessage(error)}`,
           );
         }
 
@@ -51,7 +52,7 @@ browser.runtime.onInstalled.addListener(() => {
           console.debug(`store done: ${cacheKey}`);
         } catch (error) {
           console.debug(
-            `store fail: ${cacheKey}, error: ${(error as any).message}`,
+            `store fail: ${cacheKey}, error: ${getErrorMessage(error)}`,
           );
         }
 

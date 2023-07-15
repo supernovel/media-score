@@ -2,7 +2,6 @@ import axios from '../axios';
 
 const WATCHA_API_URL = 'https://play.watcha.net/api/contents';
 const TYPE: { [key: string]: string } = {
-  // eslint-disable-next-line @typescript-eslint/camelcase
   tv_season: 'show',
 };
 const REQUEST_HEADER = {
@@ -14,7 +13,6 @@ const REQUEST_HEADER = {
 export async function getBaseInfo({ id }: MediaInfo) {
   const response = await axios.get(`${WATCHA_API_URL}/${id}.json`, {
     params: {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       comments_limit: 16,
     },
     headers: REQUEST_HEADER,

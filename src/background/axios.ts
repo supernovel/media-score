@@ -51,7 +51,10 @@ async function fetchAdapter(
  * Fetch API stage two is to get response body. This funtion tries to retrieve
  * response body based on response's type
  */
-async function getResponse(request, config): Promise<AxiosResponse<any, any>> {
+async function getResponse(
+  request,
+  config,
+): Promise<AxiosResponse<unknown, unknown>> {
   let stageOne;
   try {
     stageOne = await fetch(request);
@@ -59,7 +62,7 @@ async function getResponse(request, config): Promise<AxiosResponse<any, any>> {
     throw new axios.AxiosError('Network Error', 'ERR_NETWORK', config, request);
   }
 
-  const response: AxiosResponse<any, any> = {
+  const response: AxiosResponse<unknown, unknown> = {
     status: stageOne.status,
     statusText: stageOne.statusText,
     headers: stageOne.headers,
@@ -123,7 +126,7 @@ function createRequest(config: InternalAxiosRequestConfig): Request {
   return new Request(url, options);
 }
 
-function settle(resolve, reject, response: AxiosResponse<any, any>) {
+function settle(resolve, reject, response: AxiosResponse<unknown, unknown>) {
   const validateStatus = response.config.validateStatus;
   if (!response.status || !validateStatus || validateStatus(response.status)) {
     resolve(response);
@@ -162,24 +165,6 @@ function isAbsoluteURL(url: string) {
   return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(url);
 }
 
-/**
- * It replaces all instances of the characters `:`, `$`, `,`, `+`, `[`, and `]` with their
- * URI encoded counterparts
- *
- * @param {string} val The value to be encoded.
- *
- * @returns {string} The encoded value.
- */
-function encode(val) {
-  return encodeURIComponent(val)
-    .replace(/%3A/gi, ':')
-    .replace(/%24/g, '$')
-    .replace(/%2C/gi, ',')
-    .replace(/%20/g, '+')
-    .replace(/%5B/gi, '[')
-    .replace(/%5D/gi, ']');
-}
-
 function buildURL(
   url: string,
   params: object,
@@ -192,7 +177,7 @@ function buildURL(
 
   const serializeFn = options && options['serialize'];
 
-  let serializedParams =
+  const serializedParams =
     serializeFn == null ? qs.stringify(params) : serializeFn(params, options);
 
   if (serializedParams) {

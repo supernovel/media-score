@@ -11,7 +11,8 @@ const LOCALE_REG = /^([a-z]{2})-([A-Z]{2})$/;
  * @param type
  * @param value
  */
-export function nomalizeValue(type: string, value: any): any {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function normalizeValue(type: string, value: string): any {
   switch (type) {
     case 'title':
       return (value || '').toLowerCase().replace(TITLE_REGEXP, '');
@@ -41,10 +42,10 @@ export function findItem({
   items,
   queries,
 }: {
-  items: any[];
+  items: object[];
   queries: Array<{
     type: string;
-    find: any;
+    find: object;
     key: string | string[];
   }>;
 }) {
@@ -54,7 +55,7 @@ export function findItem({
     for (const query of queries) {
       const keys = wrapArray(query.key);
       const findType = query.type;
-      const findValue = nomalizeValue(findType, query.find);
+      const findValue = normalizeValue(findType, query.find);
 
       matchedItems = matchedItems.filter((item) => {
         let itemValue;
@@ -68,7 +69,7 @@ export function findItem({
         }
 
         if (itemValue != null) {
-          itemValue = nomalizeValue(findType, itemValue);
+          itemValue = normalizeValue(findType, itemValue);
 
           let isEqual: boolean = itemValue === findValue;
 
@@ -92,7 +93,7 @@ export function findItem({
   }
 }
 
-export function wrapArray(data: any): any[] {
+export function wrapArray(data: string | string[]): string[] {
   if (data == null) {
     return [];
   } else if (!(data instanceof Array)) {

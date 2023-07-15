@@ -12,7 +12,7 @@ const NEFLIX_API_URL = 'https://www.netflix.com/api/shakti';
  *          '["videos", :id ,"preplay",254015180,"experience"]'
  *       ]}
  */
-export async function getBaseInfo({ id, apiBuildVersion }: MediaInfo) {
+export async function getBaseInfo({ id }: MediaInfo) {
   const response = await axios.post(
     `${NEFLIX_API_URL}/mre/pathEvaluator?languages=en`,
     qs.stringify(

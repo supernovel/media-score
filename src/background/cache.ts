@@ -25,11 +25,11 @@ export async function get({
   period?: number;
 }) {
   const cacheObject = await browser.storage.local.get(cacheKey);
-  let cacheValue: any = cacheObject[cacheKey];
+  const cacheValueString: string | null = cacheObject[cacheKey];
 
-  if (cacheValue) {
-    console.debug(`found: ${cacheKey}`, cacheValue);
-    cacheValue = JSON.parse(cacheValue);
+  if (cacheValueString != null) {
+    console.debug(`found: ${cacheKey}`, cacheValueString);
+    const cacheValue = JSON.parse(cacheValueString);
     const { timestamp, value } = cacheValue;
 
     if (timestamp > getTimestamp(period || VALID_PERIOD)) {
@@ -47,7 +47,7 @@ export async function set({
   message,
 }: {
   cacheKey: string;
-  message: any;
+  message: object;
 }) {
   await browser.storage.local.set({
     [cacheKey]: JSON.stringify({

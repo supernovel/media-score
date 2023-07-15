@@ -1,6 +1,6 @@
 import htm from 'htm';
 import { h, render } from 'preact';
-import { interval, Observable, of, Subscription } from 'rxjs';
+import { interval, Observable, of } from 'rxjs';
 import {
   concatAll,
   concatMap,
@@ -41,7 +41,7 @@ const observeOnMutation = (
   config?: MutationObserverInit,
 ): Observable<MutationRecord[]> => {
   return new Observable((observer) => {
-    const mutation = new MutationObserver((mutations, _) => {
+    const mutation = new MutationObserver((mutations) => {
       observer.next(mutations);
     });
     mutation.observe(target, config);
@@ -59,11 +59,14 @@ export abstract class MediaScore {
   constructor(
     public options: MediaScoreOpts, // public serviceName: string = 'unknown',
   ) {
-    const { serviceName, oberveRootSelector, mutationObserverOptions } =
+    const { serviceName, observeRootSelector, mutationObserverOptions } =
       options;
 
-    if (typeof oberveRootSelector !== 'string' || !oberveRootSelector.length) {
-      throw new Error('oberveRootSelector required! must be selector!');
+    if (
+      typeof observeRootSelector !== 'string' ||
+      !observeRootSelector.length
+    ) {
+      throw new Error('observeRootSelector required! must be selector!');
     }
 
     this.options.serviceName = serviceName || 'unknown';
@@ -85,16 +88,16 @@ export abstract class MediaScore {
   }
 
   public observe() {
-    const { serviceName, oberveRootSelector, mutationObserverOptions } =
+    const { serviceName, observeRootSelector, mutationObserverOptions } =
       this.options;
 
-    if (oberveRootSelector == null) {
+    if (observeRootSelector == null) {
       return;
     }
 
     return interval(OBSERVER_CHECK_INTERVAL)
       .pipe(
-        map((_): Element | null => document.querySelector(oberveRootSelector)),
+        map((): Element | null => document.querySelector(observeRootSelector)),
         filter((element): element is Element => element != null),
         first(),
       )
@@ -102,7 +105,7 @@ export abstract class MediaScore {
         concatMap((element) =>
           observeOnMutation(element, mutationObserverOptions)
             .pipe(concatAll())
-            .pipe(catchError((error) => of<MutationRecord>())),
+            .pipe(catchError(() => of<MutationRecord>())),
         ),
         map((record) => record.target as Element),
         filter((element) => this.checkTriggerTarget(element)),
@@ -142,13 +145,12 @@ export abstract class MediaScore {
             return () => {
               isSubscribe = false;
             };
-          }).pipe(catchError((error) => of<RenderArgs>()));
+          }).pipe(catchError(() => of<RenderArgs>()));
         }),
         map(({ element, info }: RenderArgs) => {
           const parent = this.getAttachParent(element);
-          let attachTarget;
+          const attachTarget = document.createElement('div');
 
-          attachTarget = document.createElement('div');
           attachTarget.classList.add(MediaScoreWrapperClass);
           parent?.append(attachTarget);
 
@@ -158,8 +160,7 @@ export abstract class MediaScore {
         tap(console.debug),
         tap(this.render),
         tap(({ element, info }: RenderArgs) => {
-          let subscription: Subscription;
-          subscription = this.portStream.subscribe(
+          const subscription = this.portStream.subscribe(
             (message: MediaInfoMessage) => {
               if (message.id == info.id) {
                 this.render({ element, info: message.data });
@@ -179,7 +180,7 @@ export abstract class MediaScore {
           });
         }),
       )
-      .pipe(catchError((error) => of<RenderArgs>()))
+      .pipe(catchError(() => of<RenderArgs>()))
       .subscribe();
   }
 
@@ -191,7 +192,8 @@ export abstract class MediaScore {
     return element;
   }
 
-  protected checkTriggerTarget(element: Element): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected checkTriggerTarget(_element: Element): boolean {
     return false;
   }
 
@@ -199,7 +201,8 @@ export abstract class MediaScore {
     return element;
   }
 
-  protected getMediaInfo(element: Element): MediaInfo {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getMediaInfo(_element: Element): MediaInfo {
     return {};
   }
 }
@@ -211,6 +214,6 @@ interface RenderArgs {
 
 export interface MediaScoreOpts {
   serviceName?: string;
-  oberveRootSelector?: string;
+  observeRootSelector?: string;
   mutationObserverOptions?: MutationObserverInit;
 }

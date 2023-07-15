@@ -21,7 +21,7 @@ export async function getInfo(baseInfo: MediaInfo): Promise<MediaInfo> {
 
   // Parse jsonp format
   const data = response.data.replace(/imdb\$[^\(\)]*\((.*)\)/, '$1');
-  const items: any[] = JSON.parse(data).d;
+  const items: unknown[] = JSON.parse(data).d;
   const item = findItem({
     items,
     queries: [
