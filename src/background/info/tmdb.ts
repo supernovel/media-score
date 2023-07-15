@@ -1,6 +1,6 @@
-import axios from '../axios';
 import browser from 'webextension-polyfill';
-import { findItem } from './util';
+import axios from '../axios';
+import { compareTitle, compareType, compareYear } from './util';
 
 const PROVIDER = 'tmdb';
 const ICON = browser.runtime.getURL('/images/tmdb.png');
@@ -11,37 +11,22 @@ export async function getInfo(
   baseInfo: MediaInfo,
   locale?: string,
 ): Promise<MediaInfo> {
-  const { title, titleEn, type, year } = baseInfo;
-
   const response = await axios.get(REQUEST_URL, {
     params: {
-      query: title,
+      query: baseInfo.title,
       language: locale || 'en-US',
     },
   });
-  const items = response.data.results;
-  const item = findItem({
-    items: items.filter((value) => {
-      return value && value instanceof Object;
-    }),
-    // type=movie => { title, release_date, media_type } type=show => { name, first_air_date, media_type }
-    queries: [
-      {
-        type: 'title_en',
-        find: titleEn,
-        key: ['title', 'name'],
-      },
-      {
-        type: 'year',
-        find: year,
-        key: ['release_date', 'first_air_date'],
-      },
-      {
-        type: 'type',
-        find: type,
-        key: 'media_type',
-      },
-    ],
+  const items: TmdbItem[] = response.data.results;
+  const item = items.find((item) => {
+    return (
+      ((compareTitle(item.original_name, baseInfo.title) ||
+        compareTitle(item.name, baseInfo.title) ||
+        compareTitle(item.original_name, baseInfo.titleEn)) &&
+        (compareYear(item.release_date, baseInfo.year) ||
+          compareYear(item.first_air_date, baseInfo.year))) ||
+      compareType(item.media_type, baseInfo.type)
+    );
   });
 
   if (item) {
@@ -54,6 +39,16 @@ export async function getInfo(
       img: ICON,
     };
   } else {
-    throw Error(`Not Found ${titleEn}.`);
+    throw Error(`Not Found ${baseInfo.titleEn}.`);
   }
+}
+
+interface TmdbItem {
+  id: string;
+  original_name: string;
+  name: string;
+  release_date: string;
+  first_air_date: string;
+  media_type: string;
+  vote_average?: number;
 }

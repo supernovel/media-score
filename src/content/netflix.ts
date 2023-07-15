@@ -61,7 +61,7 @@ class NetflixScore extends MediaScore {
 
 (function run() {
   const netflixScoreBar = new NetflixScore({
-    oberveRootSelector: '#appMountPoint',
+    observeRootSelector: '#appMountPoint',
     mutationObserverOptions: {
       attributes: true,
       childList: true,

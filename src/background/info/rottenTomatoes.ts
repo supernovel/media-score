@@ -1,6 +1,6 @@
-import axios from '../axios';
 import browser from 'webextension-polyfill';
-import { findItem } from './util';
+import axios from '../axios';
+import { compareTitle, compareYear } from './util';
 
 const PROVIDER = 'rotten';
 const DOMAIN = 'https://www.rottentomatoes.com';
@@ -8,33 +8,24 @@ const ICON = browser.runtime.getURL('/images/rottenTomatoes.png');
 const REQUEST_URL = `${DOMAIN}/api/private/v2.0/search`;
 
 export async function getInfo(baseInfo: MediaInfo): Promise<MediaInfo> {
-  const { titleEn, type, year } = baseInfo;
-
   const response = await axios.get(REQUEST_URL, {
     responseType: 'text',
     params: {
-      q: titleEn,
-      t: type === 'show' ? 'tvSeries' : type,
+      q: baseInfo.titleEn,
+      t: baseInfo.type === 'show' ? 'tvSeries' : baseInfo.type,
       limit: 5,
     },
   });
 
   const { movies, tvSeries } = response.data;
-  const items = movies || tvSeries;
-  const item = findItem({
-    items,
-    queries: [
-      {
-        type: 'title',
-        find: titleEn,
-        key: ['title', 'name'],
-      },
-      {
-        type: 'year',
-        find: year,
-        key: ['startYear', 'year'],
-      },
-    ],
+  const items: RottenTomatoesItem[] = movies || tvSeries;
+  const item = items.find((item) => {
+    return (
+      (compareTitle(item.title, baseInfo.titleEn) ||
+        compareTitle(item.name, baseInfo.titleEn)) &&
+      (compareYear(item.startYear, baseInfo.year) ||
+        compareYear(item.year, baseInfo.year))
+    );
   });
 
   if (item) {
@@ -45,6 +36,15 @@ export async function getInfo(baseInfo: MediaInfo): Promise<MediaInfo> {
       img: ICON,
     };
   } else {
-    throw Error(`Not Found ${titleEn}.`);
+    throw Error(`Not Found ${baseInfo.titleEn}.`);
   }
+}
+
+interface RottenTomatoesItem {
+  title: string;
+  name: string;
+  startYear: string;
+  year: string;
+  meterScore: number;
+  url: string;
 }

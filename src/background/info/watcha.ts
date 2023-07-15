@@ -1,14 +1,16 @@
-import axios from '../axios';
 import browser from 'webextension-polyfill';
-import { findItem, parseLocale } from './util';
+import axios from '../axios';
+import { compareTitle, compareYear, parseLocale } from './util';
 
 const PROVIDER = 'watcha';
 const ICON = browser.runtime.getURL('/images/watcha.png');
 const DOMAIN = 'https://pedia.watcha.com';
-const API_DOMAIN = 'https://api-pedia.watcha.com';
+const API_DOMAIN = 'https://pedia.watcha.com';
 const REQUEST_URL = `${API_DOMAIN}/api/searches`;
+const REQUEST_DETAIL_URL = `${API_DOMAIN}/api/contents/`;
 const REQUEST_HEADER = {
-  'x-watcha-client-version': '1.0.0',
+  accept: 'application/vnd.frograms+json;version=20',
+  'x-watcha-client-version': '2.0.0',
   'x-watcha-client': 'Watcha-WebApp',
 };
 
@@ -23,12 +25,11 @@ export async function getInfo(
   baseInfo: MediaInfo,
   locale?: string,
 ): Promise<MediaInfo> {
-  const { title, titleEn, type, year } = baseInfo;
   const { language, country } = parseLocale(locale || '');
 
-  const response = await axios.get(REQUEST_URL, {
+  const response = await axios.get<WatchaResponse>(REQUEST_URL, {
     params: {
-      query: title,
+      query: baseInfo.title,
     },
     headers: Object.assign(
       {
@@ -40,41 +41,66 @@ export async function getInfo(
   });
 
   const items = (response.data.result || {})[
-    type === 'movie' ? 'movies' : 'tv_seasons'
+    baseInfo.type === 'movie' ? 'movies' : 'tv_seasons'
   ];
-  const item = findItem({
-    items,
-    queries: [
-      {
-        type: 'title',
-        find: title,
-        key: 'title',
-      },
-      {
-        type: 'year',
-        find: year,
-        key: 'year',
-      },
-      {
-        type: 'type',
-        find: type,
-        key: 'content_type',
-      },
-    ],
+  const item = items.find(({ title, year }) => {
+    return (
+      compareTitle(title, baseInfo.title) && compareYear(year, baseInfo.year)
+    );
   });
 
   if (item) {
-    const { ratings_avg: ratingsAvg, code } = item as WatchaItem;
+    const { ratings_avg: ratingsAvg } = await getContentDetail(
+      item,
+      language,
+      country,
+    );
 
     return {
       provider: PROVIDER,
       score: (ratingsAvg || 0) * 10,
-      url: `${DOMAIN}/${locale}/contents/${code}`,
+      url: `${DOMAIN}/${locale}/contents/${item.code}`,
       img: ICON,
     };
   } else {
-    throw Error(`Not found ${titleEn}`);
+    throw Error(`Not found ${baseInfo.titleEn}`);
   }
+}
+
+async function getContentDetail(
+  item: WatchaItem,
+  language: string,
+  country: string,
+): Promise<WatchaDetailResponse['result']> {
+  const response = await axios.get<WatchaDetailResponse>(
+    `${REQUEST_DETAIL_URL}/${item.code}`,
+    {
+      headers: Object.assign(
+        {
+          'x-watcha-client-language': language,
+          'x-watcha-client-region': country,
+        },
+        REQUEST_HEADER,
+      ),
+    },
+  );
+
+  return response.data.result;
+}
+
+interface WatchaResponse {
+  result: {
+    search_id: string;
+    movies: WatchaItem[];
+    tv_seasons: WatchaItem[];
+  };
+}
+
+interface WatchaDetailResponse {
+  result: {
+    ratings_avg: number;
+    ratings_count: number;
+  };
 }
 
 interface WatchaItem {

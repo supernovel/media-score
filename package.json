@@ -113,6 +113,7 @@
     "preact": "^10.16.0",
     "qs": "^6.11.2",
     "rxjs": "^7.8.1",
+    "linkedom": "^0.14.26",
     "styled-components": "^6.0.4",
     "webextension-polyfill": "^0.10.0"
   }
