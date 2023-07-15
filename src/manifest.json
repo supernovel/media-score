@@ -35,7 +35,7 @@
       "js": ["content/netflix.ts"]
     }
   ],
-  "chrome|minimum_chrome_version": "72.0",
+  "chrome|minimum_chrome_version": "88.0",
   "firefox|browser_specific_settings": {
     "gecko": {
       "id": "mediaScore@addon.com",
