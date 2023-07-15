@@ -10,30 +10,40 @@
         "48": "images/icon_48.png",
         "128": "images/icon_128.png"
     },
-    "web_accessible_resources": ["images/*.png"],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "images/*"
+            ],
+            "matches": [
+                "*://*/*"
+            ]
+        }
+    ],
     "permissions": [
-        "*://*.netflix.com/*",
-        "*://*.watcha.com/*",
-        "*://play.watcha.net/*",
-        "*://*.themoviedb.org/*",
-        "*://*.rottentomatoes.com/*",
-        "*://*.imdb.com/*",
-        "*://*.media-imdb.com/*",
         "tabs",
         "storage"
     ],
+    "host_permissions": [
+        "*://*.netflix.com/*",
+        "*://*.watcha.com/*",
+        "*://*.themoviedb.org/*",
+        "*://*.rottentomatoes.com/*",
+        "*://*.imdb.com/*",
+        "*://*.media-imdb.com/*"
+    ],
     "background": {
-        "persistent": false,
-        "scripts": ["background/background.ts"]
+        "service_worker": "background/background.ts",
+        "type": "module"
     },
     "content_scripts": [
         {
-            "matches": ["*://*.netflix.com/*"],
-            "js": ["content/netflix.ts"]
-        },
-        {
-            "matches": ["*://*.watcha.com/*"],
-            "js": ["content/watcha.ts"]
+            "matches": [
+                "*://*.netflix.com/*"
+            ],
+            "js": [
+                "content/netflix.ts"
+            ]
         }
     ],
     "chrome|minimum_chrome_version": "72.0",

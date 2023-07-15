@@ -118,9 +118,9 @@ gulp.task('scripts', async function scripts() {
 });
 
 function makeScriptTag(src) {
-    return `<script src="scripts/${src}"></script>`;
+    return `<script src="scripts/${src.name}"></script>`;
 }
 
 function makeScriptString(src) {
-    return `scripts/${src}`;
+    return `scripts/${src.name}`;
 }

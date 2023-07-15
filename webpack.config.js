@@ -107,12 +107,6 @@ const config = {
                 }
             })
         ],
-        splitChunks: {
-            chunks(chunk) {
-                return chunk.name !== 'ScoreBar';
-            },
-            automaticNameDelimiter: '-' // use '~' => load error.
-        }
     }
 };
 

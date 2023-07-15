@@ -53,8 +53,9 @@ export default async function preparingScripts() {
         manifest = applyBrowserPrefixesFor(args.vendor)(manifest);
 
         if (ENV === 'development') {
-            manifest['content_security_policy'] =
-                "script-src 'self' 'unsafe-eval'; object-src 'self'";
+            manifest['content_security_policy'] = {
+               "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+            };
         }
 
         //Get webpack entry
