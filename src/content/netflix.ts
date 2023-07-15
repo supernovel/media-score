@@ -29,7 +29,6 @@ class NetflixScore extends MediaScore {
     }
 
     protected checkTriggerTarget(target: Element) {
-        console.log(target.classList);
         return (
             target &&
             target.classList &&

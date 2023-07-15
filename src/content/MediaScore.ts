@@ -1,6 +1,6 @@
 import htm from 'htm';
 import { h, render } from 'preact';
-import { interval, Observable, of } from 'rxjs';
+import { interval, Observable, of, Subscription } from 'rxjs';
 import {
     concatAll,
     concatMap,
@@ -171,37 +171,25 @@ export abstract class MediaScore {
                 ),
                 tap(console.debug),
                 tap(this.render),
-                concatMap(({ element, info }: RenderArgs) => {
-                    return new Observable<RenderArgs>(observer => {
-                        this.portStream
-                            .pipe(
-                                map(
-                                    (message: MediaInfoMessage) => message.data
-                                ),
-                                filter(data => data.id === info?.id)
-                            )
-                            .subscribe(data => {
-                                observer.next({ element, info: data });
-                                observer.complete();
-                            });
+                tap(({ element, info }: RenderArgs) => {
+                    let subscription: Subscription;                    
+                    subscription = this.portStream.subscribe((message: MediaInfoMessage) => {
+                        if(message.id == info.id) {
+                            this.render({ element, info: message.data })
+                            subscription.unsubscribe();
+                        }
+                    });
 
-                        this.port.postMessage({
-                            id: info!.id,
-                            data: Object.assign(
-                                {
-                                    serviceName
-                                },
-                                info
-                            )
-                        });
-                    }).pipe(catchError(error => of<RenderArgs>()));
+                    this.port.postMessage({
+                        id: info!.id,
+                        data: Object.assign(
+                            {
+                                serviceName
+                            },
+                            info
+                        )
+                    });
                 }),
-                filter(
-                    ({ element }: RenderArgs) =>
-                        element != null && element.parentElement != null
-                ),
-                tap(console.debug),
-                tap(this.render)
             )
             .pipe(catchError(error => of<RenderArgs>()))
             .subscribe();

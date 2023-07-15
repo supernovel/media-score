@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../axios';
 import  browser  from 'webextension-polyfill';
 import { findItem } from './util';
 
@@ -20,9 +20,8 @@ export async function getInfo(baseInfo: MediaInfo): Promise<MediaInfo> {
     );
 
     // Parse jsonp format
-    const items: any[] = JSON.parse(
-        response.data.replace(/imdb\$.*\((.*)\)/, '$1')
-    ).d;
+    const data = response.data.replace(/imdb\$[^\(\)]*\((.*)\)/, '$1');
+    const items: any[] = JSON.parse(data).d;
     const item = findItem({
         items,
         queries: [

@@ -1,5 +1,5 @@
 import qs from 'qs';
-import axios from 'axios';
+import axios from '../axios';
 
 const NEFLIX_API_URL = 'https://www.netflix.com/api/shakti';
 
@@ -14,9 +14,11 @@ const NEFLIX_API_URL = 'https://www.netflix.com/api/shakti';
  */
 export async function getBaseInfo({ id, apiBuildVersion }: MediaInfo) {
     const response = await axios.post(
-        `${NEFLIX_API_URL}/${apiBuildVersion}/pathEvaluator?languages=en`,
+        `${NEFLIX_API_URL}/mre/pathEvaluator?languages=en`,
         qs.stringify({
             path: [`["videos",${id},["summary","title","releaseYear"]]`]
+        }, {
+            arrayFormat: "repeat"
         }),
         {
             headers: {

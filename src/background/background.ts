@@ -19,6 +19,7 @@ browser.runtime.onInstalled.addListener(() => {
         }
 
         port.onMessage.addListener(async (message: MediaInfoMessage, port) => {
+            try{
             console.debug(`BG page received message ${message} from ${port}`);
 
             const cacheKey = `${message.data.serviceName}_${message.id}`;
@@ -55,6 +56,12 @@ browser.runtime.onInstalled.addListener(() => {
             }
 
             return port.postMessage(scoreMessage);
+        }catch(error) {
+            return port.postMessage({
+                id: message.id,
+                data: {}
+            });
+        }
         });
     });
 });

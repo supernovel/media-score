@@ -8,11 +8,14 @@ export default async function getInfos(
     locale?: string
 ): Promise<AdditionalInfos> {
     const infos: Array<AdditionalInfo | null> = await Promise.all([
-        tmdb.getInfo(data, locale).catch(() => null),
-        watcha.getInfo(data, locale).catch(() => null),
-        imdb.getInfo(data).catch(() => null),
-        rottenTomatoes.getInfo(data).catch(() => null)
-    ]);
+        tmdb.getInfo(data, locale),
+        watcha.getInfo(data, locale),
+        imdb.getInfo(data),
+        rottenTomatoes.getInfo(data)
+    ].map((promise) => promise.catch((error) => {
+        console.error(error)
+        return null;
+    })));
 
     return infos.reduce(
         (merged, value) => {
