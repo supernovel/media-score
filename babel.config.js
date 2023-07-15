@@ -1,6 +1,5 @@
 //babel.config.js
 module.exports = api => {
-    const isTest = api.env('test');
     const isLoader = api.caller(caller => {
         return !!(caller && caller.name == 'babel-loader');
     });

@@ -1,4 +1,4 @@
-import qs from 'querystring';
+import qs from 'qs';
 import axios from 'axios';
 
 const NEFLIX_API_URL = 'https://www.netflix.com/api/shakti';

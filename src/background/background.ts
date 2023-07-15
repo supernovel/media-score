@@ -1,4 +1,4 @@
-import { browser } from 'webextension-polyfill-ts';
+import  browser  from 'webextension-polyfill';
 
 import * as cache from './cache';
 import getBaseInfo from './baseInfo';
@@ -27,7 +27,7 @@ const LANGUAGE_TAG: { [langCode: string]: string } = {
                 return port.postMessage(await cache.get({ cacheKey }));
             } catch (error) {
                 console.debug(
-                    `found error: ${cacheKey}, error: ${error.message}`
+                    `found error: ${cacheKey}, error: ${(error as any).message}`
                 );
             }
 
@@ -50,7 +50,7 @@ const LANGUAGE_TAG: { [langCode: string]: string } = {
                 console.debug(`store done: ${cacheKey}`);
             } catch (error) {
                 console.debug(
-                    `store fail: ${cacheKey}, error: ${error.message}`
+                    `store fail: ${cacheKey}, error: ${(error as any).message}`
                 );
             }
 

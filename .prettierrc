@@ -1,5 +1,5 @@
 {
-    "tabWidth": 4,
+    "tabWidth": 2,
     "semi": false,
     "overrides": [
         {
@@ -18,7 +18,7 @@
         },
         {
             "files": ".prettierrc",
-            "options": { 
+            "options": {
                 "parser": "json"
             }
         },

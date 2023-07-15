@@ -11,7 +11,7 @@ import {
     tap,
     catchError
 } from 'rxjs/operators';
-import { browser, Runtime } from 'webextension-polyfill-ts';
+import browser, { Runtime } from 'webextension-polyfill';
 import ScoreBar from './ScoreBar';
 
 const html = htm.bind(h);

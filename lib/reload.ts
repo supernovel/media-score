@@ -1,4 +1,4 @@
-import { browser } from 'webextension-polyfill-ts';
+import browser from 'webextension-polyfill';
 import io from 'socket.io-client';
 import { watchPort } from '../package.json';
 

@@ -23,7 +23,7 @@
 ## Build
 
 -   `npm install`
--   build & pakaging `npm run build`
+-   build & packaging `npm run build`
 -   build `npm run build:dev`
 -   watch `npm run watch:chrome`
 

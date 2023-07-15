@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { browser } from 'webextension-polyfill-ts';
+import browser from 'webextension-polyfill';
 import { findItem, parseLocale } from './util';
 
 const PROVIDER = 'watcha';
-const ICON = browser.extension.getURL('/images/watcha.png');
+const ICON = browser.runtime.getURL('/images/watcha.png');
 const DOMAIN = 'https://pedia.watcha.com';
 const API_DOMAIN = 'https://api-pedia.watcha.com';
 const REQUEST_URL = `${API_DOMAIN}/api/searches`;

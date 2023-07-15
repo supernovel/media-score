@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { browser } from 'webextension-polyfill-ts';
+import  browser  from 'webextension-polyfill';
 import { findItem } from './util';
 
 const PROVIDER = 'imdb';
-const ICON = browser.extension.getURL('/images/imdb.png');
+const ICON = browser.runtime.getURL('/images/imdb.png');
 const DOMAIN = 'https://www.imdb.com';
 const REQUEST_URL = 'https://sg.media-imdb.com/suggests';
 const RESULT_SELECTOR = '.title_block .title_bar_wrapper';

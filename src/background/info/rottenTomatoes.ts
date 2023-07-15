@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { browser } from 'webextension-polyfill-ts';
+import browser from 'webextension-polyfill';
 import { findItem } from './util';
 
 const PROVIDER = 'rotten';
 const DOMAIN = 'https://www.rottentomatoes.com';
-const ICON = browser.extension.getURL('/images/rottenTomatoes.png');
+const ICON = browser.runtime.getURL('/images/rottenTomatoes.png');
 const REQUEST_URL = `${DOMAIN}/api/private/v2.0/search`;
 
 export async function getInfo(baseInfo: MediaInfo): Promise<MediaInfo> {

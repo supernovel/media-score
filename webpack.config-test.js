@@ -1,6 +1,7 @@
-import nodeExternals from 'webpack-node-externals';
-import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const nodeExternals  = require('webpack-node-externals');
 
+/** @type {import('webpack').Configuration} */
 const config = {
     mode: 'development',
     target: 'node',

@@ -1,16 +1,17 @@
-import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
-import EventHooksPlugin from 'event-hooks-webpack-plugin';
-import { CallbackTask } from 'event-hooks-webpack-plugin/lib/tasks';
-import TerserPlugin from 'terser-webpack-plugin';
+const EventHooksPlugin =require('event-hooks-webpack-plugin');
+const { CallbackTask }  =require( 'event-hooks-webpack-plugin/lib/tasks');
+const TerserPlugin  =require( 'terser-webpack-plugin');
+const TsconfigPathsPlugin  =require( 'tsconfig-paths-webpack-plugin');
 
 const hashNameExclude = ['ScoreBar'];
 
+/** @type {import('webpack').Configuration} */
 const config = {
     output: {
-        filename: chunkData => {
+        filename: pathData => {
             if (
                 process.env.NODE_ENV === 'production' &&
-                !hashNameExclude.includes(chunkData.chunk.name)
+                !hashNameExclude.includes(pathData.chunk.name)
             ) {
                 return '[chunkhash].js';
             } else {
@@ -98,11 +99,8 @@ const config = {
         minimizer: [
             new TerserPlugin({
                 extractComments: true,
-                cache: true,
                 parallel: true,
                 terserOptions: {
-                    // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
-                    extractComments: 'all',
                     compress: {
                         drop_console: true
                     }
@@ -118,7 +116,7 @@ const config = {
     }
 };
 
-export default config;
+module.exports = config;
 
 function stringify(obj) {
     if (obj instanceof Date) {
