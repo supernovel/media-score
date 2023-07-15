@@ -23,7 +23,7 @@ const REALOAD = '__isReload__';
     await browser.storage.sync.remove(REALOAD);
 
     const socket = io(`http://localhost:${watchPort}`, {
-        reconnectionAttempts: 5
+        reconnectionAttempts: 5,
     });
     socket.on('reload', async () => {
         // Set reload flag

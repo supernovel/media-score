@@ -10,7 +10,7 @@ const LANGUAGE_TAG: { [langCode: string]: string } = {
     ja: 'ja-JP'
 };
 
-(() => {
+browser.runtime.onInstalled.addListener(() => {
     const locale = LANGUAGE_TAG[browser.i18n.getUILanguage()];
 
     browser.runtime.onConnect.addListener(async port => {
@@ -57,4 +57,4 @@ const LANGUAGE_TAG: { [langCode: string]: string } = {
             return port.postMessage(scoreMessage);
         });
     });
-})();
+});

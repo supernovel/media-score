@@ -91,6 +91,7 @@
         "require-dir": "^1.2.0",
         "sass-loader": "^13.3.2",
         "socket.io": "^4.7.1",
+        "socket.io-client": "^4.7.1",
         "style-loader": "^3.3.3",
         "terser-webpack-plugin": "^5.3.9",
         "ts-loader": "^9.4.4",
