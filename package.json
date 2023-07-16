@@ -1,7 +1,7 @@
 {
   "name": "media-score",
   "extensionName": "Media Score for 넷플릭스(Neflix)",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Show user score on the media list in ott service (Netflix).",
   "main": "src/manifast.json",
   "scripts": {
