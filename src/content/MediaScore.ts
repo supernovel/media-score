@@ -1,14 +1,8 @@
 import htm from 'htm';
 import { h, render } from 'preact';
-import { Observable, interval, of } from 'rxjs';
-import {
-  catchError,
-  concatMap,
-  filter,
-  map,
-  tap
-} from 'rxjs/operators';
-import browser, { Runtime } from 'webextension-polyfill';
+import { Observable, Subscription, of } from 'rxjs';
+import { catchError, concatMap, filter, map, tap } from 'rxjs/operators';
+import browser from 'webextension-polyfill';
 import ScoreBar from './ScoreBar';
 
 const html = htm.bind(h);
@@ -16,16 +10,14 @@ const html = htm.bind(h);
 const OBSERVER_CHECK_INTERVAL = 500;
 const MediaScoreWrapperClass = 'media-score-wrapper';
 
-const observeOnPort = (port: Runtime.Port): Observable<MediaInfoMessage> => {
+const observeOnInterval = (period: number): Observable<MediaInfoMessage> => {
   return new Observable((observer) => {
-    const listener = (message: MediaInfoMessage) => {
-      observer.next(message);
-    };
-
-    port.onMessage.addListener(listener);
+    const intervalId = setInterval(() => {
+      observer.next();
+    }, period);
 
     const unsubscribe = () => {
-      port.onMessage.removeListener(listener);
+      clearInterval(intervalId);
     };
 
     return unsubscribe;
@@ -33,8 +25,7 @@ const observeOnPort = (port: Runtime.Port): Observable<MediaInfoMessage> => {
 };
 
 export abstract class MediaScore {
-  private port: Runtime.Port;
-  private portStream: Observable<{ id: string; data: MediaInfo }>;
+  private subscription?: Subscription;
 
   constructor(
     public options: MediaScoreOpts, // public serviceName: string = 'unknown',
@@ -49,11 +40,6 @@ export abstract class MediaScore {
     }
 
     this.options.serviceName = serviceName || 'unknown';
-
-    this.port = browser.runtime.connect(undefined, {
-      name: 'media_score',
-    });
-    this.portStream = observeOnPort(this.port);
   }
 
   public observe() {
@@ -63,7 +49,7 @@ export abstract class MediaScore {
       return;
     }
 
-    return interval(OBSERVER_CHECK_INTERVAL)
+    this.subscription = observeOnInterval(OBSERVER_CHECK_INTERVAL)
       .pipe(
         map((): Element | null => document.querySelector(observeRootSelector)),
         filter((element): element is Element => element != null),
@@ -119,28 +105,42 @@ export abstract class MediaScore {
         tap(console.debug),
         tap(this.render),
         tap(({ element, info }: RenderArgs) => {
-          const subscription = this.portStream.subscribe(
-            (message: MediaInfoMessage) => {
+          try {
+            const listener = (
+              message: MediaInfoMessage,
+              sender: browser.Runtime.MessageSender,
+            ) => {
+              if (sender.id != browser.runtime.id) {
+                return;
+              }
+
               if (message.id == info.id) {
                 this.render({ element, info: message.data });
-                subscription.unsubscribe();
+                browser.runtime.onMessage.removeListener(listener);
               }
-            },
-          );
+            };
 
-          this.port.postMessage({
-            id: info!.id,
-            data: Object.assign(
-              {
-                serviceName,
-              },
-              info,
-            ),
-          });
+            browser.runtime.onMessage.addListener(listener);
+
+            browser.runtime.sendMessage({
+              id: info!.id,
+              data: Object.assign(
+                {
+                  serviceName,
+                },
+                info,
+              ),
+            });
+          } catch (error) {
+            console.error(error);
+          }
         }),
       )
-      .pipe(catchError(() => of<RenderArgs>()))
       .subscribe();
+  }
+
+  public unobserve() {
+    this.subscription?.unsubscribe();
   }
 
   protected render({ element, info }: RenderArgs) {

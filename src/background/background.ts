@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 
-import * as cache from './cache';
 import getBaseInfo from './baseInfo';
+import * as cache from './cache';
 import getInfo from './info';
 import { getErrorMessage } from './utils';
 
@@ -14,19 +14,25 @@ const LANGUAGE_TAG: { [langCode: string]: string } = {
 browser.runtime.onInstalled.addListener(() => {
   const locale = LANGUAGE_TAG[browser.i18n.getUILanguage()];
 
-  browser.runtime.onConnect.addListener(async (port) => {
-    if (port.name !== 'media_score') {
-      return;
-    }
+  browser.runtime.onMessage.addListener(
+    async (message: MediaInfoMessage, sender) => {
+      const tabId = sender.tab?.id;
 
-    port.onMessage.addListener(async (message: MediaInfoMessage, port) => {
+      if (sender.id !== browser.runtime.id) {
+        return;
+      }
+
+      if (tabId == null) {
+        return;
+      }
+
       try {
-        console.debug(`BG page received message ${message} from ${port}`);
+        console.debug(`BG page received message ${message} from ${sender.id}`);
 
         const cacheKey = `${message.data.serviceName}_${message.id}`;
 
         try {
-          return port.postMessage(await cache.get({ cacheKey }));
+          return browser.tabs.sendMessage(tabId, await cache.get({ cacheKey }));
         } catch (error) {
           console.debug(
             `found error: ${cacheKey}, error: ${getErrorMessage(error)}`,
@@ -56,13 +62,13 @@ browser.runtime.onInstalled.addListener(() => {
           );
         }
 
-        return port.postMessage(scoreMessage);
+        return browser.tabs.sendMessage(tabId, scoreMessage);
       } catch (error) {
-        return port.postMessage({
+        return browser.tabs.sendMessage(tabId, {
           id: message.id,
           data: {},
         });
       }
-    });
-  });
+    },
+  );
 });
